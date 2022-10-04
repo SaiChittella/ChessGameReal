@@ -465,6 +465,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
     positionRow = parseInt(positionRow);
     let king = false;
     let pawn = false;
+    let diagPawn = false;
 
     if(piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p')){
         pawn = true;
@@ -493,6 +494,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             index+=1;
         } else if(direction === 'diagonal'){
             if(pawn) {
+                diagPawn = true;
                 let temp;
                 if(turn == 'black') {
                     temp = (letter[index-1]) + (positionRow-1);
@@ -500,7 +502,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                     temp = (letter[index+1]) + (positionRow+1);
                 }
 
-                if(checkIfPieceIsInWay(temp, true)) {
+                if(checkIfPieceIsInWay(temp, diagPawn)) {
                     alert('HERE');
                     document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
                 }
@@ -508,7 +510,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             } else {
                 newPosition = (positionColumn) + parseInt(positionRow);
                 diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false);
-            }
+            }s
         } else if(knight) {
             break;
         }
@@ -517,7 +519,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
         } 
         
 
-        if(checkIfPieceIsInWay(newPosition)) {
+        if(checkIfPieceIsInWay(newPosition, diagPawn)) {
             break;
         }
 
@@ -612,7 +614,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
 
         if((king || knight) && !checkIfOutOfBounds(index, positionRow) ) {
 
-            checkIfPieceIsInWay(newPosition)
+            checkIfPieceIsInWay(newPosition, false)
             
             newPosition = originalPosition;
             positionRow = originalRow;
@@ -643,7 +645,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             movePiece(newPosition, originalPosition, 'bishop');
         }
         
-        if(checkIfPieceIsInWay(newPosition)) {
+        if(checkIfPieceIsInWay(newPosition, false)) {
             newPosition = originalPosition;
             positionRow = originalRow;
             index = originalColumn; 
