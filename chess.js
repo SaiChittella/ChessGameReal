@@ -467,7 +467,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
     let pawn = false;
     let diagPawn = false;
 
-    if(piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p')){
+    if(piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p') && piece.charAt(1) != 'i'){
         pawn = true;
     }
 
@@ -496,21 +496,22 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             if(pawn) {
                 diagPawn = true;
                 let temp;
-                if(turn == 'black') {
-                    temp = (letter[index-1]) + (positionRow-1);
-                } else {
-                    temp = (letter[index+1]) + (positionRow+1);
-                }
+
+                temp = highlightPawnDiag(index,positionRow,-1, 1);
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
-                    alert('HERE');
                     document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
                 }
-                newPosition = temp;
+
+                temp = highlightPawnDiag(index,positionRow,1, -1);
+
+                if(checkIfPieceIsInWay(temp, diagPawn)) {
+                    document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
+                }
             } else {
                 newPosition = (positionColumn) + parseInt(positionRow);
                 diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false);
-            }s
+            }
         } else if(knight) {
             break;
         }
@@ -520,6 +521,9 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
         
 
         if(checkIfPieceIsInWay(newPosition, diagPawn)) {
+            if(checkIfOppositeColors(newPosition)) {
+                movePiece(newPosition, originalPosition, piece);
+            }
             break;
         }
 
@@ -534,6 +538,13 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
     while(positionRow <= 7 && positionRow > 0 && index < letter.length && index >= 0 && king != true && distance > count);
 }
 
+function highlightPawnDiag(index, positionRow, num1, num2) {
+    if(turn == 'black') {
+        return (letter[index+num1]) + (positionRow-1);
+    } else {
+        return (letter[index+num2]) + (positionRow+1);
+    }
+}
 
 let positionRow;
 function diagonalHighlight(index, positionRow, positionColumn, originalPosition, king, knight) {
@@ -706,8 +717,6 @@ function checkIfOppositeColors(pos) {
         color = 'white';
     }
 
-    alert('TURN IS : ' + turn)
-    alert('COLOR : ' + color)
 
     if(color === turn){
         return false;
