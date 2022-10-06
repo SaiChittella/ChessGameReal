@@ -508,6 +508,8 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
                     document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
                 }
+
+                newPosition = temp;
             } else {
                 newPosition = (positionColumn) + parseInt(positionRow);
                 diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false);
@@ -633,9 +635,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
 
             if(checkIfPieceIsInWay(newPosition, false)) {
                 if(checkIfOppositeColors(newPosition)) {
-                    alert('NEW POS IS ' + newPosition)
-                    alert('PIECE IS : ' + piece);
-                    movePiece(newPosition, piece);
+                    movePiece(newPosition, originalPosition, piece);
                 }
             }
             
@@ -759,8 +759,6 @@ function movePiece(newPosition, originalPosition, piece) {
                 killings(newPosition); 
             }
 
-            alert('POS : ' + newPosition);
-            alert('piece: ' + piece);
             if((piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p')) && piece != 'bishop'){
                 if(board[piece]['firstMove'] === true) {
                     board[piece]['distance'] = 1;
