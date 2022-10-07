@@ -378,14 +378,9 @@ function piecesRules() {
             stopColor = true;  
             findSlopePawns(boardPieces[piecesArr[i]]); 
         }); 
-    }
-
-    // document.querySelector('#'+ statsButton).addEventListener('click', () => {
-        
-    // });
+    } 
+    
 }
-
-
 
 piecesRules();
  
@@ -501,12 +496,14 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
                     document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
+                    movePiece(temp, originalPosition, piece);
                 }
 
                 temp = highlightPawnDiag(index,positionRow,1, -1);
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
                     document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
+                    movePiece(temp, originalPosition, piece);
                 }
 
                 newPosition = temp;
