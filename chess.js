@@ -381,10 +381,10 @@ function piecesRules() {
     } 
     document.querySelector('#statsButton').addEventListener('click', () => {
         document.querySelector('#popup-1').classList.toggle('active');
+        document.querySelector('#popup-1').style.color = 'red';
     });
     
 }
-
 
 piecesRules();
  
