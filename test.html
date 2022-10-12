@@ -14,11 +14,7 @@
   <link rel="stylesheet" href="test.css">
 <script>
   document.querySelector('#statsButton').addEventListener('click', () => {
-    const test = document.createElement('class');
-    const popup = document.querySelector(test);
-    popup.id = 'popup-1';
-    popup.class = 'popup';
-    document.querySelector(popup).classList.toggle('active');
+    document.querySelector('#popup-1').classList.toggle('active');
     // document.querySelector('#popup-1').style.color = 'red';
 
     // const stats = document.querySelector('#stats');
@@ -34,7 +30,7 @@
 });
 
 function closeStats() {
-    document.querySelector('#popup-1').remove(); 
+    document.querySelector('#popup-1').classList.toggle('active');
 }
 </script>
 

@@ -381,16 +381,16 @@ function piecesRules() {
     } 
     document.querySelector('#statsButton').addEventListener('click', () => {
         document.querySelector('#popup-1').classList.toggle('active');
-        document.querySelector('#popup-1').style.color = 'red';
+        document.querySelector('#popup-1').style.color = 'black';
 
         const stats = document.querySelector('#stats');
-        // if(whitePoints >= blackPoints) {
-        //     stats.innerHTML = 'WHITE : ' + whitePoints + '</br></br></br>';
-        //     stats.innerHTML += 'BLACK : ' + blackPoints; 
-        // } else {
-        //     stats.innerHTML = 'BLACK : ' + blackPoints + '</br></br></br>';
-        //     stats.innerHTML += 'WHITE : ' + whitePoints;
-        // }
+        if(whitePoints >= blackPoints) {
+            stats.innerHTML = 'WHITE : ' + whitePoints + '🏆🥇 </br></br></br>';
+            stats.innerHTML += 'BLACK : ' + blackPoints + '👎🏾🙅🏾‍♂️'; 
+        } else {
+            stats.innerHTML = 'BLACK : ' + blackPoints + '🏆🥇 /br></br></br>';
+            stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
+        }
 
         setTimeout(closeStats, 5000);
     });
@@ -398,7 +398,7 @@ function piecesRules() {
 }
 
 function closeStats() {
-    document.querySelector('#popup-1').innerHTML = '';
+    document.querySelector('#popup-1').classList.toggle('active');
 }
 
 piecesRules();
@@ -776,7 +776,8 @@ function movePiece(newPosition, originalPosition, piece) {
             }
 
             if((piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p')) && piece != 'bishop'){
-                if(board[piece]['firstMove'] === true) {
+                alert('piece is: ' + piece)
+                if(board[piece]['firstMove']) {
                     board[piece]['distance'] = 1;
                     board[piece]['firstMove'] = false;      
                 }
