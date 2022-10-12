@@ -384,8 +384,8 @@ function piecesRules() {
         document.querySelector('#popup-1').style.color = 'red';
 
         const stats = document.querySelector('#stats');
-        stats.innerHTML = 'WHITE : ' + whitePoints + '</br>';
-        stats.innerHTML = 'BLACK : ' + blackPoints; 
+        stats.innerHTML = 'WHITE : ' + whitePoints + '</br></br></br>';
+        stats.innerHTML += 'BLACK : ' + blackPoints; 
     });
 
 }

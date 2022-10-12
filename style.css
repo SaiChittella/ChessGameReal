@@ -50,9 +50,10 @@ h1 {
   width: 450px;
   height: 220px;
   z-index: 2;
-  text-align: center;
+  /* text-align: center; */
   padding: 20px;
   box-sizing: border-box;
+  font-size: 30px;
 }
 
 .popup.active .overlay {
