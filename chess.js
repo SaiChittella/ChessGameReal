@@ -382,8 +382,12 @@ function piecesRules() {
     document.querySelector('#statsButton').addEventListener('click', () => {
         document.querySelector('#popup-1').classList.toggle('active');
         document.querySelector('#popup-1').style.color = 'red';
+
+        const stats = document.querySelector('#stats');
+        stats.innerHTML = 'WHITE : ' + whitePoints + '</br>';
+        stats.innerHTML = 'BLACK : ' + blackPoints; 
     });
-    
+
 }
 
 piecesRules();
