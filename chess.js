@@ -514,14 +514,14 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 temp = highlightPawnDiag(index,positionRow,-1, 1);
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
-                    document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
+                    document.querySelector('#' + temp).style.backgroundColor = '#347890';
                     movePiece(temp, originalPosition, piece);
                 }
 
                 temp = highlightPawnDiag(index,positionRow,1, -1);
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
-                    document.querySelector('#' + (letter[index+1]) + (positionRow+1)).style.backgroundColor = '#347890';
+                    document.querySelector('#' + temp).style.backgroundColor = '#347890';
                     movePiece(temp, originalPosition, piece);
                 }
 
@@ -776,7 +776,6 @@ function movePiece(newPosition, originalPosition, piece) {
             }
 
             if((piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p')) && piece != 'bishop'){
-                alert('piece is: ' + piece)
                 if(board[piece]['firstMove']) {
                     board[piece]['distance'] = 1;
                     board[piece]['firstMove'] = false;      
