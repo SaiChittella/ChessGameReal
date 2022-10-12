@@ -384,10 +384,21 @@ function piecesRules() {
         document.querySelector('#popup-1').style.color = 'red';
 
         const stats = document.querySelector('#stats');
-        stats.innerHTML = 'WHITE : ' + whitePoints + '</br></br></br>';
-        stats.innerHTML += 'BLACK : ' + blackPoints; 
+        // if(whitePoints >= blackPoints) {
+        //     stats.innerHTML = 'WHITE : ' + whitePoints + '</br></br></br>';
+        //     stats.innerHTML += 'BLACK : ' + blackPoints; 
+        // } else {
+        //     stats.innerHTML = 'BLACK : ' + blackPoints + '</br></br></br>';
+        //     stats.innerHTML += 'WHITE : ' + whitePoints;
+        // }
+
+        setTimeout(closeStats, 5000);
     });
 
+}
+
+function closeStats() {
+    document.querySelector('#popup-1').innerHTML = '';
 }
 
 piecesRules();

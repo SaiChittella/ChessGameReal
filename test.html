@@ -2,18 +2,40 @@
 <html>
 <body>
 
-<h1>The Document Object</h1>
-<h2>The createElement() Method</h2>
+  <div class="popup" id="popup-1">
+    <div class="overlay"></div>
+    <div class="content">
+        <p id="stats">REEHAN</p>
+    </div>
+  </div>
 
-<p>Create a p element with some text:</p>
+  <button id="statsButton">STATS</button>
 
+  <link rel="stylesheet" href="test.css">
 <script>
-// Create element:
-  const para = document.createElement("p");
-  para.innerText = "This is a paragraph.";
+  document.querySelector('#statsButton').addEventListener('click', () => {
+    const test = document.createElement('class');
+    const popup = document.querySelector(test);
+    popup.id = 'popup-1';
+    popup.class = 'popup';
+    document.querySelector(popup).classList.toggle('active');
+    // document.querySelector('#popup-1').style.color = 'red';
 
-//   Append to body:
-  document.body.appendChild(para);
+    // const stats = document.querySelector('#stats');
+    // // if(whitePoints >= blackPoints) {
+    // //     stats.innerHTML = 'WHITE : ' + whitePoints + '</br></br></br>';
+    // //     stats.innerHTML += 'BLACK : ' + blackPoints; 
+    // // } else {
+    // //     stats.innerHTML = 'BLACK : ' + blackPoints + '</br></br></br>';
+    // //     stats.innerHTML += 'WHITE : ' + whitePoints;
+    // // }
+
+    setTimeout(closeStats, 5000);
+});
+
+function closeStats() {
+    document.querySelector('#popup-1').remove(); 
+}
 </script>
 
 </body>
