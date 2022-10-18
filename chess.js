@@ -382,13 +382,16 @@ function piecesRules() {
     document.querySelector('#statsButton').addEventListener('click', () => {
         document.querySelector('#popup-1').classList.toggle('active');
         document.querySelector('#popup-1').style.color = 'black';
-
+        
         const stats = document.querySelector('#stats');
-        if(whitePoints >= blackPoints) {
+        if(whitePoints > blackPoints) {
             stats.innerHTML = 'WHITE : ' + whitePoints + '🏆🥇 </br></br></br>';
             stats.innerHTML += 'BLACK : ' + blackPoints + '👎🏾🙅🏾‍♂️'; 
+        } else if(whitePoints < blackPoints){
+            stats.innerHTML = 'BLACK : ' + blackPoints + '🏆🥇 </br></br></br>';
+            stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
         } else {
-            stats.innerHTML = 'BLACK : ' + blackPoints + '🏆🥇 /br></br></br>';
+            stats.innerHTML = 'BLACK : ' + blackPoints + '👎🏾🙅🏾‍♂️ </br></br></br>';
             stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
         }
 
@@ -514,18 +517,22 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 temp = highlightPawnDiag(index,positionRow,-1, 1);
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
-                    document.querySelector('#' + temp).style.backgroundColor = '#347890';
-                    movePiece(temp, originalPosition, piece);
+                    if(checkIfOppositeColors(newPosition)) {
+                        document.querySelector('#' + temp).style.backgroundColor = '#347890';
+                        movePiece(temp, originalPosition, piece);
+                    }
                 }
 
                 temp = highlightPawnDiag(index,positionRow,1, -1);
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
-                    document.querySelector('#' + temp).style.backgroundColor = '#347890';
-                    movePiece(temp, originalPosition, piece);
+                    if(checkIfOppositeColors(newPosition)) {
+                        document.querySelector('#' + temp).style.backgroundColor = '#347890';
+                        movePiece(temp, originalPosition, piece);
+                    }
                 }
 
-                newPosition = temp;
+                // newPosition = temp;
             } else {
                 newPosition = (positionColumn) + parseInt(positionRow);
                 diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false);
@@ -537,7 +544,6 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             break;
         } 
         
-
         if(checkIfPieceIsInWay(newPosition, diagPawn)) {
             if(checkIfOppositeColors(newPosition)) {
                 movePiece(newPosition, originalPosition, piece);
@@ -551,6 +557,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
         }
 
         // document.querySelector('#' + newPosition).style.backgroundColor = '#347890';           
+
         movePiece(newPosition, originalPosition, piece);
     }    
     while(positionRow <= 7 && positionRow > 0 && index < letter.length && index >= 0 && king != true && distance > count);
@@ -774,6 +781,7 @@ function movePiece(newPosition, originalPosition, piece) {
                 // alert("Pos: " + newPosition);
                 killings(newPosition); 
             }
+
 
             if((piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p')) && piece != 'bishop'){
                 if(board[piece]['firstMove']) {
