@@ -520,7 +520,6 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                     if(checkIfOppositeColors(newPosition)) {
                         document.querySelector('#' + temp).style.backgroundColor = '#347890';
                         movePiece(temp, originalPosition, piece);
-                        document.querySelector('#' + temp).style.transform = 'rotate(180deg)';
                     }
                 }
 
@@ -530,7 +529,6 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                     if(checkIfOppositeColors(newPosition)) {
                         document.querySelector('#' + temp).style.backgroundColor = '#347890';
                         movePiece(temp, originalPosition, piece);
-                        document.querySelector('#' + temp).style.transform = 'rotate(180deg)';
                     }
                 }
             } else {
@@ -555,9 +553,6 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
         if(pawn && count > 2) {
             break;
         }
-
-        // document.querySelector('#' + newPosition).style.backgroundColor = '#347890';           
-
         movePiece(newPosition, originalPosition, piece);
     }    
     while(positionRow <= 7 && positionRow > 0 && index < letter.length && index >= 0 && king != true && distance > count);
