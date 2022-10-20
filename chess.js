@@ -542,10 +542,11 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             break;
         } 
         
-        if(checkIfPieceIsInWay(newPosition, diagPawn)) {
-            if(checkIfOppositeColors(newPosition)) {
+        
+        if(checkIfPieceIsInWay(newPosition, diagPawn, pawn)) {
+            if(checkIfOppositeColors(newPosition)) { 
                 movePiece(newPosition, originalPosition, piece);
-            }
+            }            
             break;
         }
 
@@ -696,10 +697,12 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
 }
 
 
-function checkIfPieceIsInWay(newPosition, diagPawn) {
+function checkIfPieceIsInWay(newPosition, diagPawn, pawn) {
     if(checkIfChildNodes(newPosition)) {
         if(checkIfOppositeColors(newPosition)){
-            document.querySelector('#' + newPosition).style.backgroundColor = '#347890';            
+            if(!pawn || diagPawn) {
+                document.querySelector('#' + newPosition).style.backgroundColor = '#347890';            
+            }
             removeClicksForPiece(findPiece(newPosition));
         }
         return true;
