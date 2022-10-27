@@ -355,7 +355,7 @@ pieceStats = {
 function piecesRules() {
     for(let i = 0; i<piecesArr.length; i++) {
         let stopColor = false;
-        document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
+         document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
             if(!stopColor) {
                 document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
                 document.querySelector(piecesArr[i]).style.left = '-0.2%';
