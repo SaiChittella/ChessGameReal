@@ -522,7 +522,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                         movePiece(temp, originalPosition, piece);
                     }
                 }
-
+                
                 temp = highlightPawnDiag(index,positionRow,1, -1);
 
                 if(checkIfPieceIsInWay(temp, diagPawn)) {
@@ -531,6 +531,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                         movePiece(temp, originalPosition, piece);
                     }
                 }
+                
             } else {
                 newPosition = (positionColumn) + parseInt(positionRow);
                 diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false);
@@ -543,6 +544,8 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
         } 
         
         
+        count++;
+        
         if(checkIfPieceIsInWay(newPosition, diagPawn, pawn)) {
             if(checkIfOppositeColors(newPosition)) { 
                 movePiece(newPosition, originalPosition, piece);
@@ -550,7 +553,6 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             break;
         }
 
-        count++;
         if(pawn && count > 2) {
             break;
         }
