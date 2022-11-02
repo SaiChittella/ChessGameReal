@@ -553,10 +553,12 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             break;
         }
 
+
         if(pawn && count > 2) {
             break;
         }
-        movePiece(newPosition, originalPosition, piece);
+        if(newPosition !== '') 
+            movePiece(newPosition, originalPosition, piece);
     }    
     while(positionRow <= 7 && positionRow > 0 && index < letter.length && index >= 0 && king != true && distance > count);
 }
@@ -700,6 +702,9 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
 
 
 function checkIfPieceIsInWay(newPosition, diagPawn, pawn) {
+    if(newPosition === '') {
+        return;
+    }
     if(checkIfChildNodes(newPosition)) {
         if(checkIfOppositeColors(newPosition)){
             if(!pawn || diagPawn) {
