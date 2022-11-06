@@ -395,7 +395,7 @@ function piecesRules() {
             stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
         }
 
-        setTimeout(closeStats, 5000);
+        setTimeout(closeStats, 2500);
     });
 
 }
@@ -515,23 +515,18 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 let temp;
 
                 temp = highlightPawnDiag(index,positionRow,-1, 1);
-
-                if(checkIfPieceIsInWay(temp, diagPawn)) {
-                    if(checkIfOppositeColors(newPosition)) {
-                        document.querySelector('#' + temp).style.backgroundColor = '#347890';
+                if(!checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)){
+                    if(checkIfPieceIsInWay(temp, diagPawn)) {
                         movePiece(temp, originalPosition, piece);
                     }
-                }
-                
+                } 
+
                 temp = highlightPawnDiag(index,positionRow,1, -1);
-
-                if(checkIfPieceIsInWay(temp, diagPawn)) {
-                    if(checkIfOppositeColors(newPosition)) {
-                        document.querySelector('#' + temp).style.backgroundColor = '#347890';
+                if(!checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)) {
+                    if(checkIfPieceIsInWay(temp, diagPawn)) {
                         movePiece(temp, originalPosition, piece);
-                    }
+                    }   
                 }
-                
             } else {
                 newPosition = (positionColumn) + parseInt(positionRow);
                 diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false);
@@ -871,10 +866,11 @@ function movePiece(newPosition, originalPosition, piece) {
                 turn = 'black';
             } else {
                 turn = 'white';
-                divImg.style.transform = 'rotate(180deg)';
+                divImg.style.transform += 'rotate(180deg)';
             }
-            
+
             flipBoard();
+            
         });
     }
 }
