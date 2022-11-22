@@ -872,6 +872,7 @@ function movePiece(newPosition, originalPosition, piece) {
                 turn = 'black';
             } else {
                 turn = 'white';
+                divImg.style.border = '10px solid blue';
                 divImg.style.transform += 'rotate(180deg)';
             }
 
@@ -1057,11 +1058,3 @@ function rotateBoard() {
 window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
 };
-
-
-// function removeAllClicks() {
-//     for(let i=0; i<piecesArr.length; i++) {
-//         removeSquareClick(piecesArr[i].substring(1, piecesArr[i].length));
-//     }
-//     piecesRules();
-// }
