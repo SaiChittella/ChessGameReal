@@ -379,26 +379,32 @@ function piecesRules() {
             findSlopePawns(boardPieces[piecesArr[i]]); 
         }); 
     } 
-    document.querySelector('#statsButton').addEventListener('click', () => {
-        document.querySelector('#popup-1').classList.toggle('active');
-        document.querySelector('#popup-1').style.color = 'black';
-        
-        const stats = document.querySelector('#stats');
-        if(whitePoints > blackPoints) {
-            stats.innerHTML = 'WHITE : ' + whitePoints + '🏆🥇 </br></br></br>';
-            stats.innerHTML += 'BLACK : ' + blackPoints + '👎🏾🙅🏾‍♂️'; 
-        } else if(whitePoints < blackPoints){
-            stats.innerHTML = 'BLACK : ' + blackPoints + '🏆🥇 </br></br></br>';
-            stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
-        } else {
-            stats.innerHTML = 'BLACK : ' + blackPoints + '👎🏾🙅🏾‍♂️ </br></br></br>';
-            stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
-        }
-
-        setTimeout(closeStats, 2500);
-    });
+    
 
 }
+document.querySelector('#statsButton').addEventListener('click', () => {
+    document.querySelector('#popup-1').classList.toggle('active');
+    document.querySelector('#popup-1').style.color = 'black';
+    const stats = document.querySelector('#stats')
+
+    if (turn === 'black')
+        stats.style.transform = 'rotate(180deg)';
+
+    if(whitePoints > blackPoints) {
+        stats.innerHTML = 'WHITE : ' + whitePoints + '🏆🥇 </br></br></br>';
+        stats.innerHTML += 'BLACK : ' + blackPoints + '👎🏾🙅🏾‍♂️'; 
+    } else if(whitePoints < blackPoints){
+        stats.innerHTML = 'BLACK : ' + blackPoints + '🏆🥇 </br></br></br>';
+        stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
+    } else {
+        stats.innerHTML = 'BLACK : ' + blackPoints + '👎🏾🙅🏾‍♂️ </br></br></br>';
+        stats.innerHTML += 'WHITE : ' + whitePoints + '👎🏾🙅🏾‍♂️';
+    }
+
+    setTimeout(closeStats, 2500);
+
+});
+
 
 function closeStats() {
     document.querySelector('#popup-1').classList.toggle('active');

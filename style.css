@@ -17,6 +17,7 @@ h1 {
 
 }
 #statsButton {
+    border: 10px solid orange;
     border-radius: 20%;
     width: 10px;
     height: 10px;
