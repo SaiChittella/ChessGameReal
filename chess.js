@@ -428,10 +428,10 @@ function findSlopePawns(piece) {
         run = board[piece]['slope']['run'];
     }
     
-    highlightMoves(rise, run, piece);
+    highlightMoves(rise, run, piece, false);
 }
 
-function highlightMoves(rise, run, currPiece) {
+function highlightMoves(rise, run, currPiece, kingCheck) {
     let positionColumns = board[currPiece]['positionColumn'];
     let positionRow = board[currPiece]['positionRow'];
     const direction = board[currPiece]['direction'];    
@@ -439,17 +439,17 @@ function highlightMoves(rise, run, currPiece) {
     let letterIndex = findIndex(positionColumns);
     for(let i=0; i<direction.length; i++) {
         if(direction[i] === 'forward') {
-            findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece);
+            findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece, kingCheck);
         } else if(direction[i] === 'backward'){
-            findMovesDirection(direction[i], positionColumns, positionRow, distance,(letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece);
+            findMovesDirection(direction[i], positionColumns, positionRow, distance,(letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece, kingCheck);
         } else if(direction[i] === 'left') {
-            findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece);
+            findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece, kingCheck);
         } else if(direction[i] === 'right') {
-           findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece);
+           findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece, kingCheck);
         } else if(direction[i] === 'diagonal') {
-           findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece);
+           findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), false, currPiece, kingCheck);
         } else if(direction[i] === 'L') {
-            findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), true, currPiece);
+            findMovesDirection(direction[i], positionColumns, positionRow, distance, (letter[letterIndex + parseInt(run)]) + '' + (parseInt(positionRow) + parseInt(rise)), true, currPiece, kingCheck);
         }
     }    
 
@@ -480,7 +480,7 @@ let dictOfPieces = {
     'pawn8': 'pawn',
 }
 
-function findMovesDirection(direction, positionColumn, positionRow, distance, position, knight, piece){
+function findMovesDirection(direction, positionColumn, positionRow, distance, position, knight, piece, kingCheck){
     let originalPosition = positionColumn + parseInt(positionRow);
     let newPosition = ''; 
     let count = 0;
@@ -495,12 +495,13 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
     }
 
     if(knight) {
-        diagonalHighlight(index, positionRow, positionColumn, (letter[index] + '' + positionRow), false, true);
+        diagonalHighlight(index, positionRow, positionColumn, (letter[index] + '' + positionRow), false, true, kingCheck);
     }
 
     if(distance === 1 && !pawn) { 
         king = true;
     }
+
 
     do {
         if(direction === 'forward') { 
@@ -519,23 +520,36 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             if(pawn) {
                 diagPawn = true;
                 let temp;
-
+                
                 temp = highlightPawnDiag(index,positionRow,-1, 1);
-                if(!checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)){
+                if(kingCheck){
+                    if(checkIfKing(temp)) {
+                        alert('KING CHECK')
+                        break;
+                    }
+                }
+                if(!kingCheck && !checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)){
+
                     if(checkIfPieceIsInWay(temp, diagPawn)) {
                         movePiece(temp, originalPosition, piece);
                     }
-                } 
+                }
 
                 temp = highlightPawnDiag(index,positionRow,1, -1);
-                if(!checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)) {
+                if(kingCheck){
+                    if(checkIfKing(temp)) {
+                        alert('KING CHECK')
+                        break;
+                    }
+                }
+                if(!kingCheck && !checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)) {
                     if(checkIfPieceIsInWay(temp, diagPawn)) {
                         movePiece(temp, originalPosition, piece);
                     }   
                 }
             } else {
                 newPosition = (positionColumn) + parseInt(positionRow);
-                diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false);
+                diagonalHighlight(index, positionRow, positionColumn, newPosition, king, false, kingCheck);
             }
         } else if(knight) {
             break;
@@ -543,37 +557,59 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
         if(positionRow <= 0 || positionRow > 8 || index < 0 || index > letter.length - 1){
             break;
         } 
-        
-        
+
         count++;
         
-        if(checkIfPieceIsInWay(newPosition, diagPawn, pawn)) {
+        if(!kingCheck && checkIfPieceIsInWay(newPosition, diagPawn, pawn)) {
             if(checkIfOppositeColors(newPosition)) { 
                 movePiece(newPosition, originalPosition, piece);
             }            
             break;
         }
-
+        if(kingCheck){
+            if(newPosition === originalPosition){
+                continue;
+            }          
+                
+            if(checkIfKing(newPosition)) {
+                alert('KING IN THE WAY')
+                break;
+            }
+        }
 
         if(pawn && count > 2) {
             break;
         }
-        if(newPosition !== '') 
+        if(newPosition !== '' && !kingCheck) 
             movePiece(newPosition, originalPosition, piece);
     }    
     while(positionRow <= 7 && positionRow > 0 && index < letter.length && index >= 0 && king != true && distance > count);
 }
 
 function highlightPawnDiag(index, positionRow, num1, num2) {
-    if(turn == 'black') {
+    if(turn === 'black') {
         return (letter[index+num1]) + (positionRow-1);
     } else {
         return (letter[index+num2]) + (positionRow+1);
     }
 }
 
+function checkIfKing(pos) {
+    let piece = findPiece(pos, false)
+    // alert('piece: ' + piece)
+    if(turn === 'black') {
+        if(piece === 'king')
+            return true
+    } else {
+        if(piece === 'blackking')
+            return true
+    }
+    return false;
+}
+
+
 let positionRow;
-function diagonalHighlight(index, positionRow, positionColumn, originalPosition, king, knight) {
+function diagonalHighlight(index, positionRow, positionColumn, originalPosition, king, knight, kingCheck) {
     let counter = 1;
     newPosition = originalPosition;
     let originalRow = positionRow;
@@ -643,9 +679,9 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             }
             newPosition = (letter[index]) + positionRow;
         }
-        if(knight && !checkIfChildNodes(newPosition)) {
+        if(!kingCheck && knight && !checkIfChildNodes(newPosition)) {
             movePiece(newPosition, originalPosition, 'knight');
-        } else if(king && !checkIfChildNodes(newPosition)) {
+        } else if(!kingCheck && king && !checkIfChildNodes(newPosition)) {
             movePiece(newPosition, originalPosition, 'king');
         } 
 
@@ -657,12 +693,19 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 piece = 'knight';
             }
 
-            if(checkIfPieceIsInWay(newPosition, false)) {
+            if(!kingCheck && checkIfPieceIsInWay(newPosition, false)) {
                 if(checkIfOppositeColors(newPosition)) {
                     movePiece(newPosition, originalPosition, piece);
                 }
             }
             
+            if(kingCheck) {
+                if(checkIfKing(newPosition)) {
+                    alert('KING IN THE WAY')
+                    break;
+                }
+            }
+
             newPosition = originalPosition;
             positionRow = originalRow;
             index = originalColumn; 
@@ -688,11 +731,15 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             }
         }
 
-        if(!knight && !king) {
+        if(checkIfKing(newPosition)) {
+            alert('KING IN THE WAY')
+            break;
+        }
+        if(!kingCheck && !knight && !king) {
             movePiece(newPosition, originalPosition, 'bishop');
         }
         
-        if(checkIfPieceIsInWay(newPosition, false)) {
+        if(!kingCheck && checkIfPieceIsInWay(newPosition, false)) {
             newPosition = originalPosition;
             positionRow = originalRow;
             index = originalColumn; 
@@ -711,7 +758,7 @@ function checkIfPieceIsInWay(newPosition, diagPawn, pawn) {
             if(!pawn || diagPawn) {
                 document.querySelector('#' + newPosition).style.backgroundColor = '#347890';            
             }
-            removeClicksForPiece(findPiece(newPosition));
+            removeClicksForPiece(findPiece(newPosition, true));
         }
         return true;
     } else {
@@ -722,15 +769,15 @@ function checkIfPieceIsInWay(newPosition, diagPawn, pawn) {
     }
 }
 
-function findPiece(newPosition) {
+function findPiece(newPosition, inWay) {
     let pieces = Object.keys(board);
 
     for(let i=0; i<pieces.length; i++) {
         let positionColumn = board[pieces[i]]['positionColumn'];
         let positionRow = board[pieces[i]]['positionRow'];
-
         if((positionColumn + positionRow) === newPosition) {
-            board[pieces[i]]['inWay'] = true;
+            if(inWay)
+                board[pieces[i]]['inWay'] = true;
             return pieces[i];
         }
     }
@@ -802,7 +849,7 @@ function movePiece(newPosition, originalPosition, piece) {
             let black = false;
             let pieceSrc = "";
 
-            daPiece = findPiece(originalPosition);
+            daPiece = findPiece(originalPosition, true);
             // alert('DA PIECE : ' + daPiece)
 
             if(daPiece.startsWith('b') && daPiece.charAt(1) === 'l') {
@@ -868,6 +915,12 @@ function movePiece(newPosition, originalPosition, piece) {
             piecesRules();
             removeHighlights(true);
             
+            
+            if(daPiece !== 'blackking' && daPiece !== 'king') {
+                highlightMoves(2, 1, daPiece, true)            
+
+            }
+
             if(turn === 'white') {
                 turn = 'black';
             } else {
@@ -875,9 +928,8 @@ function movePiece(newPosition, originalPosition, piece) {
                 divImg.style.border = '10px solid blue';
                 divImg.style.transform += 'rotate(180deg)';
             }
-
+    
             flipBoard();
-            
         });
     }
 }
@@ -893,7 +945,7 @@ function killings(pos) {
 }   
 
 function stats(pos) {
-    let piece  = findPiece(pos);
+    let piece  = findPiece(pos, true);
     
     if(turn === 'white'){
         whitePoints += pieceStats[board[piece]['type']];
@@ -904,7 +956,7 @@ function stats(pos) {
 
 function removePiece(pos) {
     document.querySelector('#' + pos).removeChild(document.querySelector('#' + pos).childNodes[0]);
-    let piece = findPiece(pos);
+    let piece = findPiece(pos, true);
 
     for(let i = 0; i < piecesArr.length; i++){
         if(piecesArr[i] === ('#' + piece)) {
@@ -956,7 +1008,7 @@ function removeHighlights(second) {
     }
     if(second) {
         removePiecesHighlight();
-    }
+    }    
 }
 
 function removePiecesHighlight() {
@@ -1055,6 +1107,10 @@ function rotateBoard() {
     document.querySelector('.board').style.marginTop = '0px';
 
 }
-window.onbeforeunload = function() {
-    return "Data will be lost if you leave the page, are you sure?";
-};
+
+// Checks
+    // As you are highlighting the possible moves to move to, if the opposite colors king is in one of them, call check function which will alert user that the king is in danger. Highlight king box red, and do not allow them to move an other piece. 
+
+// window.onbeforeunload = function() {
+//     return "Data will be lost if you leave the page, are you sure?";
+// };
