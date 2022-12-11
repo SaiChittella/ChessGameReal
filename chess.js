@@ -570,11 +570,11 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             if(newPosition === originalPosition){
                 continue;
             }          
-                
+            
             if(checkIfKing(newPosition)) {
                 alert('KING IN THE WAY')
                 break;
-            }
+            } 
         }
 
         if(pawn && count > 2) {
