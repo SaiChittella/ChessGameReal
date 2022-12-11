@@ -522,9 +522,15 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 let temp;
                 
                 temp = highlightPawnDiag(index,positionRow,-1, 1);
-                if(kingCheck){
-                    if(checkIfKing(temp)) {
-                        alert('KING CHECK')
+                if(kingCheck && temp !== ''){
+                    if(temp === originalPosition){
+                        continue;
+                    }          
+                    
+                    if(document.querySelector('#' + temp).hasChildNodes()){
+                        if(checkIfKing(temp)) {
+                            alert('KING IN CHECK!!!')
+                        }
                         break;
                     }
                 }
@@ -536,9 +542,15 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 }
 
                 temp = highlightPawnDiag(index,positionRow,1, -1);
-                if(kingCheck){
-                    if(checkIfKing(temp)) {
-                        alert('KING CHECK')
+                if(kingCheck && temp !== ''){
+                    if(temp === originalPosition){
+                        continue;
+                    }          
+                    
+                    if(document.querySelector('#' + temp).hasChildNodes()){
+                        if(checkIfKing(temp)) {
+                            alert('KING IN CHECK!!!')
+                        }
                         break;
                     }
                 }
@@ -566,15 +578,17 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             }            
             break;
         }
-        if(kingCheck){
+        if(kingCheck && !pawn){
             if(newPosition === originalPosition){
                 continue;
             }          
             
-            if(checkIfKing(newPosition)) {
-                alert('KING IN THE WAY')
+            if(document.querySelector('#' + newPosition).hasChildNodes()){
+                if(checkIfKing(newPosition)) {
+                    alert('KING IN CHECK!!!')
+                }
                 break;
-            } 
+            }
         }
 
         if(pawn && count > 2) {
@@ -701,7 +715,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             
             if(kingCheck) {
                 if(checkIfKing(newPosition)) {
-                    alert('KING IN THE WAY')
+                    alert('KING IN CHECK!!!')
                     break;
                 }
             }
@@ -732,7 +746,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
         }
 
         if(checkIfKing(newPosition)) {
-            alert('KING IN THE WAY')
+            alert('KING IN CHECK!!!')
             break;
         }
         if(!kingCheck && !knight && !king) {
