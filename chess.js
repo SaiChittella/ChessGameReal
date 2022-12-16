@@ -939,8 +939,7 @@ function movePiece(newPosition, originalPosition, piece) {
                 turn = 'black';
             } else {
                 turn = 'white';
-                divImg.style.border = '10px solid blue';
-                divImg.style.transform += 'rotate(180deg)';
+                document.querySelector('#' + daPiece).style.transform = 'rotate(180deg)'
             }
     
             flipBoard();
