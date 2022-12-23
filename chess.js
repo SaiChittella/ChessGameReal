@@ -23,13 +23,13 @@ boardArr = {
     'H': [1,2,3,4,5,6,7,8],
 }
 
-// DA BOARD
+// // DA BOARD
 
 const letters = Object.keys(boardArr);
 
-removeHighlights();
+// removeHighlights();
 
-// pieces
+// // pieces
 pieces = {
     'white': {
         'rook': 'ChessPieces/WhitePieces/Rook.png',
@@ -90,9 +90,11 @@ function putPiecesOnBoard(type) {
             }
             img.src = pieces[type][blackPieces[counter]];  
         }
-        img.style.height = "100px";
+
+        img.style.height = "62px";
         img.style.position = 'absolute'; 
         img.style.left = "3%";
+        
         if(type === 'black') {
             if(i >= 8) {
                 document.querySelector('#' + letter[i-8] + "7").appendChild(img);
@@ -133,58 +135,60 @@ function putThingsOnBoard(type, backwards) {
         numberDiv.innerHTML = '';
         let topCounter = 80;
         if(!backwards) {
+            let numberDiv 
             for(let i = 8; i >= 1; i--){
-                let numberDiv = document.querySelector('#numberDiv');
-                numberDiv.style.height = '107.5px';
-                numberDiv.style.width = '107.5px';
+                numberDiv = document.querySelector('#numberDiv');
+                numberDiv.style.height = '70px';
+                numberDiv.style.width = '70px';
                 numberDiv.innerHTML += i + " <br /><br />";
-                numberDiv.style.fontSize = "47px";
+                numberDiv.style.fontSize = "30px";
                 numberDiv.style.color = 'white';
                 numberDiv.style.position = 'absolute';
                 numberDiv.style.left = '28%'
                 numberDiv.style.top = topCounter + "%";
-                topCounter -= 9.9;
+                topCounter -= 10.5;
             }    
+
         } else { 
             for(let i = 1; i <= 8; i++){
                 let numberDiv = document.querySelector('#numberDiv');
-                numberDiv.style.height = '107.5px';
-                numberDiv.style.width = '107.5px';
+                numberDiv.style.height = '70px';
+                numberDiv.style.width = '70px';
                 numberDiv.innerHTML += i + " <br /><br />";
-                numberDiv.style.fontSize = "47px";
+                numberDiv.style.fontSize = "30px";
                 numberDiv.style.color = 'white';
                 numberDiv.style.position = 'absolute';
                 numberDiv.style.left = '28%'
                 numberDiv.style.top = topCounter + "%";
-                topCounter -= 9.9;
+                topCounter -= 20;
             }    
         }
     } else{
         letterDiv.innerHTML = '';
-        let leftCounter = -37;
+        let leftCounter = -40;
         if(!backwards) {
             for(let i = 0; i < 8; i++){
                 let letterDiv = document.querySelector('#letterDiv');
-                letterDiv.style.height = '107.5px';
+                letterDiv.style.height = '70px';
                 letterDiv.style.width = '910px';
                 letterDiv.innerHTML += letter[i] + '⠀⠀⠀';
-                letterDiv.style.fontSize = "47px";
+                letterDiv.style.fontSize = "28px";
                 letterDiv.style.color = 'white';
                 letterDiv.style.position = 'absolute';
-                letterDiv.style.top = '102%'
+                letterDiv.style.top = '85%'
                 letterDiv.style.left = leftCounter + "%";
                 leftCounter += 10;
             }
         } else {
             for(let i = 7; i >=0; i--){
                 let letterDiv = document.querySelector('#letterDiv');
-                letterDiv.style.height = '107.5px';
+                letterDiv.style.height = '70px';
                 letterDiv.style.width = '910px';
                 letterDiv.innerHTML += letter[i] + '⠀⠀⠀';
-                letterDiv.style.fontSize = "47px";
+                letterDiv.style.fontSize = "30px";
                 letterDiv.style.color = 'white';
                 letterDiv.style.position = 'absolute';
-                letterDiv.style.top = '102%'
+                letterDiv.style.top = '85%'
                 letterDiv.style.left = leftCounter + "%";
                 leftCounter += 10;
             }
@@ -200,15 +204,15 @@ function putButtons() {
     let forfiet = document.querySelector("#forfietButton");
     let stats = document.querySelector("#statsButton");
     stats.style.backgroundColor = 'green';
-    stats.style.height = '50px';
-    stats.style.width = '100px';
+    stats.style.height = '40px';
+    stats.style.width = '70px';
     stats.style.position = 'absolute';
     stats.style.top = '10%';
     stats.style.left = '10%';
 
     forfiet.style.backgroundColor = 'red';
-    forfiet.style.height = '50px';
-    forfiet.style.width = '100px';
+    forfiet.style.height = '40px';
+    forfiet.style.width = '70px';
     forfiet.style.position = 'absolute';
     forfiet.style.top = '20%';
     forfiet.style.left = '10%';
@@ -359,8 +363,8 @@ function piecesRules() {
             if(!stopColor) {
                 document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
                 document.querySelector(piecesArr[i]).style.left = '-0.2%';
-                document.querySelector(piecesArr[i]).style.height = '107.5px';
-                document.querySelector(piecesArr[i]).style.width = '107.5px'; 
+                document.querySelector(piecesArr[i]).style.height = '70px';
+                document.querySelector(piecesArr[i]).style.width = '70px'; 
             }
         });
 
@@ -614,7 +618,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
         if(pawn && count > 2) {
             break;
         }
-        if(newPosition !== '' && !kingCheck) 
+        if(safe && newPosition !== '' && !kingCheck) 
             movePiece(newPosition, originalPosition, piece);
     }    
     while(positionRow <= 7 && positionRow > 0 && index < letter.length && index >= 0 && king != true && distance > count);
@@ -629,8 +633,48 @@ function checkAllDirections(pos)
 }
 
 const checkL = (pos) => {
-    
+    if(checkDaL(pos, 'right', 1, 2) || checkDaL(pos, 'left', 1, 2) || checkDaL(pos, 'downLeft', 1, 2) || checkDaL(pos, 'downRight', 1, 2))
+        return true
+    if(checkDaL(pos, 'right', 2, 1) || checkDaL(pos, 'left', 2, 1) || checkDaL(pos, 'downLeft', 2, 1) || checkDaL(pos, 'downRight', 2, 1))
+        return true
+
+    return false
 }
+
+const checkDaL = (pos, direction, rChange, cChange) => {
+    let placeNo = parseInt(pos.charAt(1))
+    let index = findIndex(pos.charAt(0))
+
+    let newPosition
+    if(direction === 'right'){
+        placeNo += rChange
+        index += cChange
+    } else if(direction === 'downRight') {
+        placeNo -= rChange
+        index += cChange
+    } else if(direction === 'left') {
+        placeNo += rChange
+        index -= cChange
+    } else {
+        placeNo -= rChange
+        index -= cChange
+    }
+
+    if(checkIfOutOfBounds(index, placeNo)) {
+        return false
+    }
+
+    newPosition = letter[index] + placeNo
+
+    if(document.querySelector('#' + newPosition).hasChildNodes()) {
+        if(checkIfKnight(newPosition)) {
+            return true
+        }
+    }
+
+    return false
+}
+
 
 function checkDiagonal(pos) {
     // to check diagnoals, we need to 'go right one' and 'up one'     
@@ -650,7 +694,6 @@ function checkDaDiag(pos, direction) {
     let count = 0
     
     do {
-       
         if(direction === 'right'){
             placeNo++
             index++
@@ -672,7 +715,7 @@ function checkDaDiag(pos, direction) {
 
         newPosition = letter[index] + placeNo
 
-        // alert('NEW POSITION TO CHECK : ' + newPosition)
+
         if(document.querySelector('#' + newPosition).hasChildNodes()) {
             if(count === 0) {
                 if(checkIfPawn(newPosition)) {
@@ -940,9 +983,6 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             movePiece(newPosition, originalPosition, 'king');
         } 
 
-
-
-
         if((king || knight) && !checkIfOutOfBounds(index, positionRow) ) {
             let piece = '';
             if(king) {
@@ -957,9 +997,15 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 }
             }
             
-            if(kingCheck) {
-                if(checkIfKing(newPosition)) {
-                    alert('KING IN CHECK!!!')
+            if(kingCheck){
+                if(newPosition === originalPosition){
+                    continue;
+                }          
+                
+                if(document.querySelector('#' + newPosition).hasChildNodes()){
+                    if(checkIfKing(newPosition)) {
+                        alert('KING IN CHECK!!!')
+                    }
                     break;
                 }
             }
@@ -989,14 +1035,21 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             }
         }
 
-        if(kingCheck) {
-            if(checkIfKing(newPosition)) {
-                alert('KING IN CHECK!!!')
+        if(kingCheck){
+            // alert('HERE AND CHECKING...' + newPosition)
+            if(newPosition === originalPosition){
+                continue;
+            }          
+            
+            if(document.querySelector('#' + newPosition).hasChildNodes()){
+                if(checkIfKing(newPosition)) {
+                    alert('KING IN CHECK!!!')
+                }
                 break;
             }
         }
 
-        if(!kingCheck && !knight && !king) {
+        if(safe && !kingCheck && !knight && !king) {
             movePiece(newPosition, originalPosition, 'bishop');
         }
         
@@ -1150,8 +1203,8 @@ function movePiece(newPosition, originalPosition, piece) {
             
             let divImg = document.createElement('img');
             divImg.src = pieceSrc;
-            divImg.style.height = '117.5px';
-            divImg.style.width = '117.5px';
+            divImg.style.height = '70px';
+            divImg.style.width = '70px';
             divImg.style.position = 'absolute';
             divImg.style.left = '-4%';          
             divImg.style.top = '0%'; 
@@ -1235,8 +1288,12 @@ function removePiece(pos) {
 //splice(start)
 // NEW STUFF
 function removeHighlights(second) {
-    let left1 = 32.2;
-    let top1 = 89.5;
+    // let left1 = 32.2;
+    // let top1 = 89.5;
+
+    let left1 = 30
+    let top1 = 75
+
     let black = true;
     
     for(let i=0; i<8; i++) {
@@ -1250,9 +1307,12 @@ function removeHighlights(second) {
                 square.style.backgroundColor = 'white';
                 black = true;   
             }
+            square.style.height = '70px';
+            square.style.width = '70px';
             square.style.top = top1 + "%";
             square.style.left = left1 + "%";
-            top1 -= 12.65;
+            top1 -= 10;
+            // top1 -= 0;
             if(j === 7) {
                 if(black) {
                     black = false;
@@ -1262,13 +1322,16 @@ function removeHighlights(second) {
             } 
         }
     
-        top1 = 89.5;
-        left1 += 6;
+        top1 = 75
+        // left1 += 6;
+        left1 += 4.5
     }
     if(second) {
         removePiecesHighlight();
     }    
 }
+removeHighlights(false);
+
 
 function removePiecesHighlight() {
     for(let i=0; i<piecesArr.length; i++) {
@@ -1335,11 +1398,11 @@ function rotateLetters() {
     lettersToRotate.style.transform += 'rotate(180deg)';
     lettersToRotate.style.position = 'aboslute';
     if(turn === 'white') {
-        lettersToRotate.style.top = '103%';  
+        lettersToRotate.style.top = '85%';  
         // lettersToRotate.style.left = '33%';                                
     } else{
-        lettersToRotate.style.top = '-12%';
-        lettersToRotate.style.left = '31%';
+        lettersToRotate.style.top = '-5%';
+        lettersToRotate.style.left = '8%';
     }
 }
 
@@ -1350,21 +1413,22 @@ function rotateNumbers(){
 
     if(turn === 'white') {
         numbersToRotate.style.top = '5%';
-        numbersToRotate.style.left = '29%';
+        numbersToRotate.style.left = '28%';
     } else {
-        numbersToRotate.style.top = '90%';
+        numbersToRotate.style.top = '75%';
         numbersToRotate.style.left = '25%';
     }
 }
 
 function rotateBoard() {
+    // document.querySelector('.board').style.transformOrigin = 'center';
     document.querySelector('.board').style.transform += 'rotate(180deg)';
+
     document.querySelector('.board').style.width = '100%';
     document.querySelector('.board').style.height = '100%';
     document.querySelector('.board').style.position = 'absolute';
-    document.querySelector('.board').style.marginLeft = 'auto';
-    document.querySelector('.board').style.marginTop = '0px';
-
+    // document.querySelector('.board').style.left = '-5%';
+    // document.querySelector('.board').style.top= '-10%';
 }
 
 // Checks
