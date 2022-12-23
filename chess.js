@@ -165,7 +165,7 @@ function putThingsOnBoard(type, backwards) {
         }
     } else{
         letterDiv.innerHTML = '';
-        let leftCounter = -40;
+        let leftCounter = -38;
         if(!backwards) {
             for(let i = 0; i < 8; i++){
                 let letterDiv = document.querySelector('#letterDiv');
@@ -997,7 +997,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 }
             }
             
-            if(kingCheck){
+            if(kingCheck && !increment){
                 if(newPosition === originalPosition){
                     continue;
                 }          
@@ -1049,8 +1049,13 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             }
         }
 
-        if(safe && !kingCheck && !knight && !king) {
-            movePiece(newPosition, originalPosition, 'bishop');
+
+        
+        if(safe && !kingCheck && checkIfPieceIsInWay(newPosition, false, false)) {
+            if(checkIfOppositeColors(newPosition)) { 
+                movePiece(newPosition, originalPosition, 'bishop');
+            }            
+            break;
         }
         
         if(!kingCheck && checkIfPieceIsInWay(newPosition, false)) {
@@ -1143,7 +1148,7 @@ function movePiece(newPosition, originalPosition, piece) {
     if(newPosition != originalPosition) {
         let clickPos = newPosition; 
         
-        document.querySelector('#' + newPosition).addEventListener('click', () => {             
+        document.querySelector('#' + newPosition).addEventListener('click', () => {
             if(checkIfChildNodes(newPosition)) {
                 // alert("Pos: " + newPosition);
                 killings(newPosition); 
@@ -1199,7 +1204,6 @@ function movePiece(newPosition, originalPosition, piece) {
                     break;
                 }
             }
-
             
             let divImg = document.createElement('img');
             divImg.src = pieceSrc;
@@ -1324,7 +1328,7 @@ function removeHighlights(second) {
     
         top1 = 75
         // left1 += 6;
-        left1 += 4.5
+        left1 += 5
     }
     if(second) {
         removePiecesHighlight();
@@ -1431,9 +1435,17 @@ function rotateBoard() {
     // document.querySelector('.board').style.top= '-10%';
 }
 
-// Checks
-    // As you are highlighting the possible moves to move to, if the opposite colors king is in one of them, call check function which will alert user that the king is in danger. Highlight king box red, and do not allow them to move an other piece. 
+/*
+    Tings Remaining:
+        (1) When King is placed in check, for the next turn, only the King should be able to move
+        (2) A piece should not be allowed to move if moving it places the King in check
+        (3) Stalemates 
+*/
 
 // window.onbeforeunload = function() {
-//     return "Data will be lost if you leave the page, are you sure?";
+//     return "AAAAAAHHH";
 // };
+
+
+
+
