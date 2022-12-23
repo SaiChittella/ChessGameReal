@@ -3,7 +3,7 @@
 // lmao wassupp bruh lmao 89ijoewdio where were we ee e e  e e e  eaself ej adsel  e e  e e ////////
  //the sky// SAIHAAN API CREATION (BEST DEV 1 (CHILD PREDATOR), BEST DEV 2 (REEEEEEEEEEEEEEEEEEEEEEEEHHHHHHHHHHHAAAAAN DA MIDGET)) 
 let turn = 'white';
-
+let kingInCheck = false
 let whitePoints = 0;
 let blackPoints = 0 ;
 
@@ -360,6 +360,8 @@ function piecesRules() {
     for(let i = 0; i<piecesArr.length; i++) {
         let stopColor = false;
          document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
+            if(kingInCheck)
+                alert('HEREE')
             if(!stopColor) {
                 document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
                 document.querySelector(piecesArr[i]).style.left = '-0.2%';
@@ -535,6 +537,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                     if(document.querySelector('#' + temp).hasChildNodes()){
                         if(checkIfKing(temp)) {
                             alert('KING IN CHECK!!!')
+                            kingInCheck = true
                         }
                         break;
                     }
@@ -555,6 +558,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                     if(document.querySelector('#' + temp).hasChildNodes()){
                         if(checkIfKing(temp)) {
                             alert('KING IN CHECK!!!')
+                            kingInCheck = true
                         }
                         break;
                     }
@@ -610,6 +614,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             if(document.querySelector('#' + newPosition).hasChildNodes()){
                 if(checkIfKing(newPosition)) {
                     alert('KING IN CHECK!!!')
+                    kingInCheck = true
                 }
                 break;
             }
@@ -981,7 +986,9 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             movePiece(newPosition, originalPosition, 'knight');
         } else if(safe && !kingCheck && king && !checkIfChildNodes(newPosition)) {
             movePiece(newPosition, originalPosition, 'king');
-        } 
+        } else if(safe && !kingCheck && !checkIfChildNodes(newPosition)) {
+            movePiece(newPosition, originalPosition, 'bishop')
+        }
 
         if((king || knight) && !checkIfOutOfBounds(index, positionRow) ) {
             let piece = '';
@@ -1005,6 +1012,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 if(document.querySelector('#' + newPosition).hasChildNodes()){
                     if(checkIfKing(newPosition)) {
                         alert('KING IN CHECK!!!')
+                        kingInCheck = true
                     }
                     break;
                 }
@@ -1044,6 +1052,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             if(document.querySelector('#' + newPosition).hasChildNodes()){
                 if(checkIfKing(newPosition)) {
                     alert('KING IN CHECK!!!')
+                    kingInCheck = true
                 }
                 break;
             }
@@ -1438,8 +1447,11 @@ function rotateBoard() {
 /*
     Tings Remaining:
         (1) When King is placed in check, for the next turn, only the King should be able to move
+            To achieve this we can create a global variable called King in Check. When the King is in check we will make this var be true. Every turn, we will check for this variable. If this var is true, then we will disable all other pieces from being able to move. Can do this by 'undoing' the highlight thingy and leave just the King able to move with a danger eye appealing thing around it to show that this needs to be moved. 
+            When this happens, and we highlight the possible moves for the King, if there isn't anything that the King can move to without placing it in check, we will declare Checkmate and the opposite color as the winner. 
         (2) A piece should not be allowed to move if moving it places the King in check
-        (3) Stalemates 
+        (3) Checkmates
+        (4) Stalemates 
 */
 
 // window.onbeforeunload = function() {
