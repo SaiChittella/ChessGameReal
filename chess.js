@@ -6,6 +6,10 @@ let turn = 'white';
 let kingInCheck = false
 let whitePoints = 0;
 let blackPoints = 0 ;
+let pieceThatMightBeInWay;
+let arrOfPredators = []
+let goingFurther = false
+
 
 //where were we 
 const piecesArr = ['#rook1', '#knight1', '#bishop1', '#king', '#queen', '#bishop2', '#knight2', '#rook2', '#pawn1', '#pawn2', '#pawn3', '#pawn4', '#pawn5', '#pawn6', '#pawn7', '#pawn8', '#blackrook1', '#blackknight1', '#blackbishop1', '#blackking', '#blackqueen', '#blackbishop2', '#blackknight2', '#blackrook2','#blackpawn1', '#blackpawn2', '#blackpawn3', '#blackpawn4', '#blackpawn5', '#blackpawn6', '#blackpawn7', '#blackpawn8'];
@@ -311,40 +315,40 @@ boardPieces = {
 }
 
 board = {
-    'rook1': {'positionColumn': 'A', 'positionRow': '1', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook'},  
-    'knight1': {'positionColumn': 'B', 'positionRow': '1', 'slope': {'rise': [2], 'run': [1]}, 'distance': '3', 'direction':['L'], 'inWay': false, 'type': 'knight'},   
-    'bishop1': {'positionColumn': 'C', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop'},
-    'king': {'positionColumn': 'E', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false},
-    'queen': {'positionColumn': 'D', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'queen'},
-    'rook2': {'positionColumn': 'H', 'positionRow': '1', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook'},  
-    'knight2': {'positionColumn': 'G', 'positionRow': '1', 'slope': {'rise': [2], 'run': [1]}, 'distance': '3', 'direction': ['L'], 'inWay': false, 'type': 'knight'},  
-    'bishop2': {'positionColumn': 'F', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop'},
-    'pawn1': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'A', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'pawn2': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'B', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'}, 
-    'pawn3': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'C', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'pawn4': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'D', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'pawn5': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'E', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'pawn6': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'F', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'pawn7': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'G', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'pawn8': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'H', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
+    'rook1': {'positionColumn': 'A', 'positionRow': '1', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
+    'knight1': {'positionColumn': 'B', 'positionRow': '1', 'slope': {'rise': [2], 'run': [1]}, 'distance': '3', 'direction':['L'], 'inWay': false, 'type': 'knight', 'hinderance': []},   
+    'bishop1': {'positionColumn': 'C', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop', 'hinderance': []},
+    'king': {'positionColumn': 'E', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'hinderance': []},
+    'queen': {'positionColumn': 'D', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'queen', 'hinderance': []},
+    'rook2': {'positionColumn': 'H', 'positionRow': '1', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
+    'knight2': {'positionColumn': 'G', 'positionRow': '1', 'slope': {'rise': [2], 'run': [1]}, 'distance': '3', 'direction': ['L'], 'inWay': false, 'type': 'knight', 'hinderance': []},  
+    'bishop2': {'positionColumn': 'F', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop', 'hinderance': []},
+    'pawn1': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'A', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'pawn2': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'B', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []}, 
+    'pawn3': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'C', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'pawn4': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'D', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'pawn5': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'E', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'pawn6': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'F', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'pawn7': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'G', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'pawn8': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'H', 'positionRow': '2', 'firstMove': true, 'distance': 2, 'direction': ['forward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
 
     
-    'blackrook1': {'positionColumn': 'A', 'positionRow': '8', 'slope': {'rise': [0], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook'},  
-    'blackknight1': {'positionColumn': 'B', 'positionRow': '8', 'slope': {'rise': [2], 'run': [1]}, 'distance': '4', 'direction': ['L'], 'inWay': false, 'type': 'knight'},  
-    'blackbishop1': {'positionColumn': 'C', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop'},
-    'blackking': {'positionColumn': 'E', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false},
-    'blackqueen': {'positionColumn': 'D', 'positionRow': '8', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'queen'},
-    'blackrook2': {'positionColumn': 'H', 'positionRow': '8', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook'},  
-    'blackknight2': {'positionColumn': 'G', 'positionRow': '8', 'slope': {'rise': [2], 'run': [1]}, 'distance': '4', 'direction': 'L', 'inWay': false, 'type': 'knight'},  
-    'blackbishop2': {'positionColumn': 'F', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop'},
-    'blackpawn1': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'A', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'blackpawn2': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'B', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'}, 
-    'blackpawn3': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'C', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'blackpawn4': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'D', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'blackpawn5': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'E', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'blackpawn6': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'F', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'blackpawn7': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'G', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'},
-    'blackpawn8': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'H', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn'},  
+    'blackrook1': {'positionColumn': 'A', 'positionRow': '8', 'slope': {'rise': [0], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
+    'blackknight1': {'positionColumn': 'B', 'positionRow': '8', 'slope': {'rise': [2], 'run': [1]}, 'distance': '4', 'direction': ['L'], 'inWay': false, 'type': 'knight', 'hinderance': []},  
+    'blackbishop1': {'positionColumn': 'C', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop', 'hinderance': []},
+    'blackking': {'positionColumn': 'E', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'hinderance': []},
+    'blackqueen': {'positionColumn': 'D', 'positionRow': '8', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'queen', 'hinderance': []},
+    'blackrook2': {'positionColumn': 'H', 'positionRow': '8', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
+    'blackknight2': {'positionColumn': 'G', 'positionRow': '8', 'slope': {'rise': [2], 'run': [1]}, 'distance': '4', 'direction': 'L', 'inWay': false, 'type': 'knight', 'hinderance': []},  
+    'blackbishop2': {'positionColumn': 'F', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop', 'hinderance': []},
+    'blackpawn1': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'A', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'blackpawn2': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'B', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []}, 
+    'blackpawn3': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'C', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'blackpawn4': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'D', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'blackpawn5': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'E', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'blackpawn6': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'F', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'blackpawn7': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'G', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},
+    'blackpawn8': {'slope': {'rise': [2], 'run': [0]}, 'positionColumn': 'H', 'positionRow': '7', 'firstMove': true, 'distance': 2, 'direction': ['backward', 'diagonal'], 'inWay': false, 'type': 'pawn', 'hinderance': []},  
 }
 
 pieceStats = {
@@ -359,35 +363,98 @@ pieceStats = {
 function piecesRules() {
     for(let i = 0; i<piecesArr.length; i++) {
         let stopColor = false;
-         document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
-            if(kingInCheck)
-                alert('HEREE')
-            if(!stopColor) {
-                document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
-                document.querySelector(piecesArr[i]).style.left = '-0.2%';
-                document.querySelector(piecesArr[i]).style.height = '70px';
-                document.querySelector(piecesArr[i]).style.width = '70px'; 
+        if(kingInCheck) {
+            if(turn === 'white') {
+                if(piecesArr[i] === '#king') {
+                    kingDanger(piecesArr[i])
+                } 
+            } else {
+                if(piecesArr[i] === '#blackking')
+                    kingDanger(piecesArr[i])
             }
-        });
 
-        document.querySelector(piecesArr[i]).addEventListener('mouseout', () => {
-            if(!stopColor) {
-                document.querySelector(piecesArr[i]).style.backgroundColor = ''; 
-            }
-        });
 
-        document.querySelector(piecesArr[i]).addEventListener('click', () => {
-            // removeAllClicks();
-            // piecesRules();
-            removeHighlights(true); 
-            document.querySelector(piecesArr[i]).style.backgroundColor = 'lightGreen'; 
-            stopColor = true;  
-            findSlopePawns(boardPieces[piecesArr[i]]); 
-        }); 
-    } 
+
+            document.querySelector(piecesArr[i]).addEventListener('click', () => {
+                removeHighlights(true); 
+                document.querySelector(piecesArr[i]).style.backgroundColor = 'lightGreen'; 
+                findSlopePawns(boardPieces[piecesArr[i]]); 
+                if(checkCheckmate()) {
+                    if(turn === 'white') 
+                        alert('SKILL ISSUE: YOU HAVE BEEN UTTERLY DEMOLISHED AND BLACK HAS WONN 👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️.. REFRESH IF YOU WANNA GET DEMOLISHED AGAIN')
+                    else 
+                        alert('SKILL ISSUE: YOU HAVE BEEN UTTERLY DEMOLISH AND WHITE HAS WONN 👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️.. REFRESH IF YOU WANNA GET DEMOLISHED AGAIN')
+                    return
+                }
+                kingInCheck = false
+            });
+
+
+
+        } else {
+            document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
+                if(!stopColor) {
+                    document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
+                    document.querySelector(piecesArr[i]).style.left = '-0.2%';
+                    document.querySelector(piecesArr[i]).style.height = '70px';
+                    document.querySelector(piecesArr[i]).style.width = '70px'; 
+                }
+            });
+            
+            document.querySelector(piecesArr[i]).addEventListener('mouseout', () => {
+                if(!stopColor) {
+                    document.querySelector(piecesArr[i]).style.backgroundColor = ''; 
+                }
+            });
     
-
+            document.querySelector(piecesArr[i]).addEventListener('click', () => {
+                if(arrOfPredators.length !== 0){
+                    findHinderance()
+                }
+                removeHighlights(true); 
+                document.querySelector(piecesArr[i]).style.backgroundColor = 'lightGreen'; 
+                stopColor = true;  
+                findSlopePawns(boardPieces[piecesArr[i]]); 
+            });
+        }
+         
+    } 
 }
+
+const findHinderance = () => {
+    // first, we need to find the positions of both prey and predator.
+
+    let positionOfPrey = board[arrOfPredators[0]]['positionColumn'] + board[arrOfPredators[0]]['positionRow'] 
+    let positionOfPredator = board[arrOfPredators[1]]['positionColumn'] + board[arrOfPredators[1]]['positionRow'] 
+
+    // find out where predator is in relation to the prey
+    
+    // directly in front or behind meaning prey can move front or back without jepordizing da fatty king
+    if(positionOfPrey.startsWith() === positionOfPredator.startsWith()) {
+        board[arrOfPredators[0]]['hinderance'] = ['forward', 'backward']
+    }
+}
+
+const checkCheckmate = () => {
+    for(let i=0; i<letters.length; i++) {
+        for(let j=1; j<=8; j++){
+            // alert(letters[i] + j)
+            if(document.querySelector('#' + (letters[i] + j)).style.backgroundColor === 'blue')
+                return false
+        }
+    }
+
+
+    return true
+}
+
+const kingDanger = (piece) => {
+    document.querySelector(piece).style.backgroundColor = 'red';
+        document.querySelector(piece).style.left = '-0.2%';
+        document.querySelector(piece).style.height = '70px';
+        document.querySelector(piece).style.width = '70px'; 
+}
+
 document.querySelector('#statsButton').addEventListener('click', () => {
     document.querySelector('#popup-1').classList.toggle('active');
     document.querySelector('#popup-1').style.color = 'black';
@@ -529,17 +596,29 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 let temp;
                 
                 temp = highlightPawnDiag(index,positionRow,-1, 1);
-                if(kingCheck && temp !== '' && !checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)){
-                    if(temp === originalPosition){
+                if(kingCheck && !pawn){
+                    if(newPosition === originalPosition){
                         continue;
                     }          
                     
-                    if(document.querySelector('#' + temp).hasChildNodes()){
-                        if(checkIfKing(temp)) {
-                            alert('KING IN CHECK!!!')
-                            kingInCheck = true
+                    if(document.querySelector('#' + newPosition).hasChildNodes()){
+                        if(!goingFurther) {
+                            if(checkIfKing(newPosition)) {
+                                alert('KING IN CHECKK!! DONT LOOSE')
+                                kingInCheck = true
+                            } else {
+                                pieceThatMightBeInWay = findPiece(newPosition);
+                                goingFurther = true
+                            }
+                        } else {
+                            if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                                if(checkIfKing(newPosition)) {
+                                    board[pieceThatMightBeInWay]['inWay'] = true
+                                } else {
+                                    break
+                                }
+                            }
                         }
-                        break;
                     }
                 }
                 if(!kingCheck && !checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)){
@@ -550,17 +629,32 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 }
 
                 temp = highlightPawnDiag(index,positionRow,1, -1);
-                if(kingCheck && temp !== '' && !checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)){
-                    if(temp === originalPosition){
+                
+                if(kingCheck && !pawn){
+                    if(newPosition === originalPosition){
                         continue;
                     }          
                     
-                    if(document.querySelector('#' + temp).hasChildNodes()){
-                        if(checkIfKing(temp)) {
-                            alert('KING IN CHECK!!!')
-                            kingInCheck = true
+                    if(document.querySelector('#' + newPosition).hasChildNodes()){
+                        if(!goingFurther) {
+                            if(checkIfKing(newPosition)) {
+                                alert('KING IN CHECKK!! DONT LOOSE')
+                                kingInCheck = true
+                            } else {
+                                pieceThatMightBeInWay = findPiece(newPosition);
+                                goingFurther = true
+                            }
+                        } else {
+                            if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                                if(checkIfKing()) {
+                                    alert('HERE')
+                                    arrOfPredators.push(pieceThatMightBeInWay)
+                                    arrOfPredators.push(findPiece(originalPosition))
+                                } 
+                                goingFurther = false
+                                break
+                            }
                         }
-                        break;
                     }
                 }
 
@@ -612,11 +706,24 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             }          
             
             if(document.querySelector('#' + newPosition).hasChildNodes()){
-                if(checkIfKing(newPosition)) {
-                    alert('KING IN CHECK!!!')
-                    kingInCheck = true
+                if(!goingFurther) {
+                    if(checkIfKing(newPosition)) {
+                        alert('KING IN CHECKK!! DONT LOOSE')
+                        kingInCheck = true
+                    } else {
+                        pieceThatMightBeInWay = findPiece(newPosition);
+                        goingFurther = true
+                    }
+                } else {
+                    if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                        if(checkIfKing(newPosition)) {
+                            arrOfPredators.push(pieceThatMightBeInWay)
+                            arrOfPredators.push(findPiece(originalPosition))
+                        } else {
+                            break
+                        }
+                    }
                 }
-                break;
             }
         }
 
@@ -627,6 +734,8 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             movePiece(newPosition, originalPosition, piece);
     }    
     while(positionRow <= 7 && positionRow > 0 && index < letter.length && index >= 0 && king != true && distance > count);
+
+    goingFurther = false
 }
 
 function checkAllDirections(pos)
@@ -1004,17 +1113,29 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 }
             }
             
-            if(kingCheck && !increment){
+            if(kingCheck && !pawn){
                 if(newPosition === originalPosition){
                     continue;
                 }          
                 
                 if(document.querySelector('#' + newPosition).hasChildNodes()){
-                    if(checkIfKing(newPosition)) {
-                        alert('KING IN CHECK!!!')
-                        kingInCheck = true
+                    if(!goingFurther) {
+                        if(checkIfKing(newPosition)) {
+                            alert('KING IN CHECKK!! DONT LOOSE')
+                            kingInCheck = true
+                        } else {
+                            pieceThatMightBeInWay = findPiece(newPosition);
+                            goingFurther = true
+                        }
+                    } else {
+                        if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                            if(checkIfKing(newPosition)) {
+                                board[pieceThatMightBeInWay]['inWay'] = true
+                            } else {
+                                break
+                            }
+                        }
                     }
-                    break;
                 }
             }
 
@@ -1043,18 +1164,29 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             }
         }
 
-        if(kingCheck){
-            // alert('HERE AND CHECKING...' + newPosition)
+        if(kingCheck && !pawn){
             if(newPosition === originalPosition){
                 continue;
             }          
             
             if(document.querySelector('#' + newPosition).hasChildNodes()){
-                if(checkIfKing(newPosition)) {
-                    alert('KING IN CHECK!!!')
-                    kingInCheck = true
+                if(!goingFurther) {
+                    if(checkIfKing(newPosition)) {
+                        alert('KING IN CHECKK!! DONT LOOSE')
+                        kingInCheck = true
+                    } else {
+                        pieceThatMightBeInWay = findPiece(newPosition);
+                        goingFurther = true
+                    }
+                } else {
+                    if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                        if(checkIfKing(newPosition)) {
+                            board[pieceThatMightBeInWay]['inWay'] = true
+                        } else {
+                            break
+                        }
+                    }
                 }
-                break;
             }
         }
 
@@ -1104,8 +1236,6 @@ function findPiece(newPosition, inWay) {
         let positionColumn = board[pieces[i]]['positionColumn'];
         let positionRow = board[pieces[i]]['positionRow'];
         if((positionColumn + positionRow) === newPosition) {
-            if(inWay)
-                board[pieces[i]]['inWay'] = true;
             return pieces[i];
         }
     }
@@ -1238,14 +1368,14 @@ function movePiece(newPosition, originalPosition, piece) {
             for(let i=0; i<squaresToRemove.length; i++) {
                 removeSquareClick(squaresToRemove[i]);
             }
-            
-            piecesRules();
+
             removeHighlights(true);
-            
-            
+
             if(daPiece !== 'blackking' && daPiece !== 'king') {
                 highlightMoves(2, 1, daPiece, true, false)            
             }  
+                    
+            
 
             if(turn === 'white') {
                 turn = 'black';
@@ -1255,6 +1385,9 @@ function movePiece(newPosition, originalPosition, piece) {
             }
     
             flipBoard();
+
+            piecesRules();
+
         });
     }
 }
@@ -1314,7 +1447,7 @@ function removeHighlights(second) {
         for(j=0 ; j<8; j++){
             square = document.querySelector("#" + letters[i] + boardArr[letters[i]][j]);  
             if(black) {
-                square.style.backgroundColor = 'brown';
+                square.style.backgroundColor = 'green';
                 black = false;
             } else {
                 square.style.backgroundColor = 'white';
@@ -1446,11 +1579,11 @@ function rotateBoard() {
 
 /*
     Tings Remaining:
-        (1) When King is placed in check, for the next turn, only the King should be able to move
+        (1) When King is placed in check, for the next turn, only the King should be the only one able to move (DONE)
             To achieve this we can create a global variable called King in Check. When the King is in check we will make this var be true. Every turn, we will check for this variable. If this var is true, then we will disable all other pieces from being able to move. Can do this by 'undoing' the highlight thingy and leave just the King able to move with a danger eye appealing thing around it to show that this needs to be moved. 
             When this happens, and we highlight the possible moves for the King, if there isn't anything that the King can move to without placing it in check, we will declare Checkmate and the opposite color as the winner. 
         (2) A piece should not be allowed to move if moving it places the King in check
-        (3) Checkmates
+        (3) Checkmates (DONE)
         (4) Stalemates 
 */
 
