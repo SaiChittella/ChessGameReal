@@ -9,7 +9,7 @@ let blackPoints = 0 ;
 let pieceThatMightBeInWay;
 let arrOfPredators = []
 let goingFurther = false
-
+let pieceTryingToKillKing 
 
 //where were we 
 const piecesArr = ['#rook1', '#knight1', '#bishop1', '#king', '#queen', '#bishop2', '#knight2', '#rook2', '#pawn1', '#pawn2', '#pawn3', '#pawn4', '#pawn5', '#pawn6', '#pawn7', '#pawn8', '#blackrook1', '#blackknight1', '#blackbishop1', '#blackking', '#blackqueen', '#blackbishop2', '#blackknight2', '#blackrook2','#blackpawn1', '#blackpawn2', '#blackpawn3', '#blackpawn4', '#blackpawn5', '#blackpawn6', '#blackpawn7', '#blackpawn8'];
@@ -363,90 +363,153 @@ pieceStats = {
 function piecesRules() {
     for(let i = 0; i<piecesArr.length; i++) {
         let stopColor = false;
+
         if(kingInCheck) {
-            if(turn === 'white') {
-                if(piecesArr[i] === '#king') {
-                    kingDanger(piecesArr[i])
-                } 
-            } else {
-                if(piecesArr[i] === '#blackking')
-                    kingDanger(piecesArr[i])
-            }
-
-
-
-            document.querySelector(piecesArr[i]).addEventListener('click', () => {
-                removeHighlights(true); 
-                document.querySelector(piecesArr[i]).style.backgroundColor = 'lightGreen'; 
-                findSlopePawns(boardPieces[piecesArr[i]]); 
-                if(checkCheckmate()) {
-                    if(turn === 'white') 
-                        alert('SKILL ISSUE: YOU HAVE BEEN UTTERLY DEMOLISHED AND BLACK HAS WONN 👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️.. REFRESH IF YOU WANNA GET DEMOLISHED AGAIN')
-                    else 
-                        alert('SKILL ISSUE: YOU HAVE BEEN UTTERLY DEMOLISH AND WHITE HAS WONN 👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️.. REFRESH IF YOU WANNA GET DEMOLISHED AGAIN')
-                    return
-                }
-                kingInCheck = false
-            });
-
-
-
-        } else {
-            document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
-                if(!stopColor) {
-                    document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
-                    document.querySelector(piecesArr[i]).style.left = '-0.2%';
-                    document.querySelector(piecesArr[i]).style.height = '70px';
-                    document.querySelector(piecesArr[i]).style.width = '70px'; 
-                }
-            });
-            
-            document.querySelector(piecesArr[i]).addEventListener('mouseout', () => {
-                if(!stopColor) {
-                    document.querySelector(piecesArr[i]).style.backgroundColor = ''; 
-                }
-            });
-    
-            document.querySelector(piecesArr[i]).addEventListener('click', () => {
-                if(arrOfPredators.length !== 0){
-                    findHinderance()
-                }
-                removeHighlights(true); 
-                document.querySelector(piecesArr[i]).style.backgroundColor = 'lightGreen'; 
-                stopColor = true;  
-                findSlopePawns(boardPieces[piecesArr[i]]); 
-            });
+            checkCheckmate()
         }
+        document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
+            if(!stopColor) {
+                document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
+                document.querySelector(piecesArr[i]).style.left = '-0.2%';
+                document.querySelector(piecesArr[i]).style.height = '70px';
+                document.querySelector(piecesArr[i]).style.width = '70px'; 
+            }
+        });
+        
+        document.querySelector(piecesArr[i]).addEventListener('mouseout', () => {
+            if(!stopColor) {
+                document.querySelector(piecesArr[i]).style.backgroundColor = ''; 
+            }
+        });
+
+        document.querySelector(piecesArr[i]).addEventListener('click', () => {
+            removeHighlights(true); 
+            document.querySelector(piecesArr[i]).style.backgroundColor = 'lightGreen'; 
+            stopColor = true;  
+            findSlopePawns(boardPieces[piecesArr[i]]); 
+        });
          
     } 
 }
 
-const findHinderance = () => {
-    // first, we need to find the positions of both prey and predator.
-
-    let positionOfPrey = board[arrOfPredators[0]]['positionColumn'] + board[arrOfPredators[0]]['positionRow'] 
-    let positionOfPredator = board[arrOfPredators[1]]['positionColumn'] + board[arrOfPredators[1]]['positionRow'] 
-
-    // find out where predator is in relation to the prey
-    
-    // directly in front or behind meaning prey can move front or back without jepordizing da fatty king
-    if(positionOfPrey.startsWith() === positionOfPredator.startsWith()) {
-        board[arrOfPredators[0]]['hinderance'] = ['forward', 'backward']
-    }
-}
-
 const checkCheckmate = () => {
-    for(let i=0; i<letters.length; i++) {
-        for(let j=1; j<=8; j++){
-            // alert(letters[i] + j)
-            if(document.querySelector('#' + (letters[i] + j)).style.backgroundColor === 'blue')
-                return false
-        }
+    /*
+        In order to determine if the game is over and king is in checkmate, we will call this function after ever check to check.
+
+        To actually check for checkmate we need to:
+            (1) Check if the King has anwhere to move.
+                (a) If king can move anywhere, then highilght those moves, if not dont do anything.
+            (2) Check if there are any pieces that can move into the way of the piece causing the check=.
+                (a) Loop through every single piece on the board that is on your side and call checkAllDirections(). Keep an array of the squares that the piece causing the check has towards the King in check. Then, using checkAllDirections(), if any of those squares match up with any of the squares in the array, we know that this piece can move in the way, and we allow clicks for that piece beacuse it can move into the way of the piece causing the check. DO THIS FOR ALL PIECES.
+            (3) Check if any piece can kill the piece causing the check
+                (a) Loop through every piece on the side of the King in check and check if any of their available moves can kill the piece causing the check. To do this, we simply loop through the pieces on your side, and then with each piece, we recall the highLightMoves function, and without highlighting anything, we check if the piece causing the check is in the way. If it is we allow the piece that can kill the checking piece with clicks. 
+
+
+            The way we allow certain pieces with clicks during the King being in check is by keeping an array of the pieces that can move. 
+            If all of these are false, then declare checkmate.
+            If any of these are true, do it.
+    */
+
+    // if(checkIfKingCanMove() || checkIfPieceCanGetInWay() || checkIfPieceCanMurder()) {
+    //     return true
+    // } else {
+    //     return false
+    // }
+}
+
+const checkIfPieceCanGetInWay = () => {
+    let start, end
+    
+    if(pieceTryingToKillKing == 'knight1' || pieceTryingToKillKing == 'knight2' || pieceTryingToKillKing == 'blackknight1' || pieceTryingToKillKing == 'blackknight2') {
+        return false
+    } 
+
+    const killSquares = []
+
+    
+
+    if(turn === 'white') {
+        start = 0
+        end = 17
+    } else {
+        start = 17 
+        end = piecesArr.length
+    }
+
+    for(let i=start; i<end; i++) {
+        
     }
 
 
-    return true
+    pieceTryingToKillKing = ''
 }
+
+
+const checkIfKingCanMove = () => {
+    let piece 
+    if(turn === 'white') {
+        piece = 'king'
+    } else {
+        piece = 'blackking'
+    }
+
+    let position = board[piece]['positionColumn'] + board[piece]['positionRow']
+
+    for(let i=1; i<=8; i++) {
+        if(checkTheMoves(i, position))
+            return true
+    }
+
+    return false
+}
+
+const checkTheMoves = (direction, position) => {
+    let positionRow = position.charAt(1) 
+    let positionColumnIndex = findIndex(position.charAt(0))
+
+
+    if(direction === 1) {
+        // right
+        positionColumnIndex++
+    } else if(direction === 2) {
+        // diagonal Right
+        positionRow++
+        positionColumnIndex++
+    } else if(direction === 3) {
+        // up
+        positionRow++
+    } else if(direction === 4) {
+        // digonal Left
+        positionRow++
+        positionColumnIndex--
+    } else if(direction === 5) {
+        // left
+        positionColumnIndex--
+    } else if(direction === 6) {
+        // diagonal Down Left
+        positionRow--
+        positionColumnIndex--
+    } else if(direction === 7) {
+        // down
+        positionRow--
+    } else if(direction === 8) {
+        // diagonal down right
+        positionRow--
+        positionColumnIndex++
+    }
+
+    let newPosition = letter[positionColumnIndex] + positionRow
+
+    if(checkIfOutOfBounds(positionColumnIndex, positionRow)) {
+        return false
+    }
+
+    if(checkIfPieceIsInWay(newPosition, true, true) && checkAllDirections(newPosition)) {
+        return true
+    } 
+
+    return false
+ }
 
 const kingDanger = (piece) => {
     document.querySelector(piece).style.backgroundColor = 'red';
@@ -596,31 +659,20 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 let temp;
                 
                 temp = highlightPawnDiag(index,positionRow,-1, 1);
-                if(kingCheck && !pawn){
-                    if(newPosition === originalPosition){
-                        continue;
-                    }          
-                    
-                    if(document.querySelector('#' + newPosition).hasChildNodes()){
-                        if(!goingFurther) {
-                            if(checkIfKing(newPosition)) {
-                                alert('KING IN CHECKK!! DONT LOOSE')
-                                kingInCheck = true
-                            } else {
-                                pieceThatMightBeInWay = findPiece(newPosition);
-                                goingFurther = true
-                            }
-                        } else {
-                            if(document.querySelector('#' + newPosition).hasChildNodes()) {
-                                if(checkIfKing(newPosition)) {
-                                    board[pieceThatMightBeInWay]['inWay'] = true
-                                } else {
-                                    break
-                                }
-                            }
-                        }
+                if(kingCheck && !Number.isNaN(temp)) {
+                    if(checkIfOutOfBounds(findIndex(temp.charAt(0)), temp.charAt(1))) {
+                        break
                     }
+                    if(document.querySelector('#' + temp).hasChildNodes()) {
+                        if(checkIfKing(temp)) {
+                            alert('KING IN CHECK!! DONT THROW')
+                            pieceTryingToKillKing = piece
+                        }
+                        else 
+                            break
+                    } 
                 }
+
                 if(!kingCheck && !checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)){
 
                     if(checkIfPieceIsInWay(temp, diagPawn)) {
@@ -629,35 +681,20 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                 }
 
                 temp = highlightPawnDiag(index,positionRow,1, -1);
-                
-                if(kingCheck && !pawn){
-                    if(newPosition === originalPosition){
-                        continue;
-                    }          
-                    
-                    if(document.querySelector('#' + newPosition).hasChildNodes()){
-                        if(!goingFurther) {
-                            if(checkIfKing(newPosition)) {
-                                alert('KING IN CHECKK!! DONT LOOSE')
-                                kingInCheck = true
-                            } else {
-                                pieceThatMightBeInWay = findPiece(newPosition);
-                                goingFurther = true
-                            }
-                        } else {
-                            if(document.querySelector('#' + newPosition).hasChildNodes()) {
-                                if(checkIfKing()) {
-                                    alert('HERE')
-                                    arrOfPredators.push(pieceThatMightBeInWay)
-                                    arrOfPredators.push(findPiece(originalPosition))
-                                } 
-                                goingFurther = false
-                                break
-                            }
-                        }
+                if(kingCheck && !Number.isNaN(temp)) {
+                    if(checkIfOutOfBounds(findIndex(temp[0]), temp[1])) {
+                        break
                     }
+                    if(document.querySelector('#' + temp).hasChildNodes()) {
+                        if(checkIfKing(temp)) {
+                            alert('KING IN CHECK!! DONT THROW')
+                            pieceTryingToKillKing = piece
+                        }
+                        else 
+                            break
+                    } 
                 }
-
+            
                 if(!kingCheck && !checkIfOutOfBounds(findIndex(temp[0]), temp[1]) && !Number.isNaN(temp)) {
                     if(checkIfPieceIsInWay(temp, diagPawn)) {
                         movePiece(temp, originalPosition, piece);
@@ -710,6 +747,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                     if(checkIfKing(newPosition)) {
                         alert('KING IN CHECKK!! DONT LOOSE')
                         kingInCheck = true
+                        pieceTryingToKillKing = piece
                     } else {
                         pieceThatMightBeInWay = findPiece(newPosition);
                         goingFurther = true
@@ -1113,28 +1151,11 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 }
             }
             
-            if(kingCheck && !pawn){
-                if(newPosition === originalPosition){
-                    continue;
-                }          
-                
+            if(kingCheck){
                 if(document.querySelector('#' + newPosition).hasChildNodes()){
-                    if(!goingFurther) {
-                        if(checkIfKing(newPosition)) {
-                            alert('KING IN CHECKK!! DONT LOOSE')
-                            kingInCheck = true
-                        } else {
-                            pieceThatMightBeInWay = findPiece(newPosition);
-                            goingFurther = true
-                        }
-                    } else {
-                        if(document.querySelector('#' + newPosition).hasChildNodes()) {
-                            if(checkIfKing(newPosition)) {
-                                board[pieceThatMightBeInWay]['inWay'] = true
-                            } else {
-                                break
-                            }
-                        }
+                    if(checkIfKing(newPosition)) {
+                        alert('KING IN CHECK!! DONT THROW')
+                        pieceTryingToKillKing = piece
                     }
                 }
             }
@@ -1164,7 +1185,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             }
         }
 
-        if(kingCheck && !pawn){
+        if(kingCheck){
             if(newPosition === originalPosition){
                 continue;
             }          
@@ -1174,6 +1195,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                     if(checkIfKing(newPosition)) {
                         alert('KING IN CHECKK!! DONT LOOSE')
                         kingInCheck = true
+                        pieceTryingToKillKing = piece
                     } else {
                         pieceThatMightBeInWay = findPiece(newPosition);
                         goingFurther = true
@@ -1181,7 +1203,8 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 } else {
                     if(document.querySelector('#' + newPosition).hasChildNodes()) {
                         if(checkIfKing(newPosition)) {
-                            board[pieceThatMightBeInWay]['inWay'] = true
+                            arrOfPredators.push(pieceThatMightBeInWay)
+                            arrOfPredators.push(findPiece(originalPosition))
                         } else {
                             break
                         }
@@ -1196,10 +1219,9 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             if(checkIfOppositeColors(newPosition)) { 
                 movePiece(newPosition, originalPosition, 'bishop');
             }            
-            break;
         }
         
-        if(!kingCheck && checkIfPieceIsInWay(newPosition, false)) {
+        if(!kingCheck && checkIfPieceIsInWay(newPosition, false, false)) {
             newPosition = originalPosition;
             positionRow = originalRow;
             index = originalColumn; 
