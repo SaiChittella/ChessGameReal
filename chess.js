@@ -10,6 +10,8 @@ let pieceThatMightBeInWay;
 let arrOfPredators = []
 let goingFurther = false
 let pieceTryingToKillKing 
+const killSquares = []
+const piecesThatCanMove = []
 
 //where were we 
 const piecesArr = ['#rook1', '#knight1', '#bishop1', '#king', '#queen', '#bishop2', '#knight2', '#rook2', '#pawn1', '#pawn2', '#pawn3', '#pawn4', '#pawn5', '#pawn6', '#pawn7', '#pawn8', '#blackrook1', '#blackknight1', '#blackbishop1', '#blackking', '#blackqueen', '#blackbishop2', '#blackknight2', '#blackrook2','#blackpawn1', '#blackpawn2', '#blackpawn3', '#blackpawn4', '#blackpawn5', '#blackpawn6', '#blackpawn7', '#blackpawn8'];
@@ -318,7 +320,7 @@ board = {
     'rook1': {'positionColumn': 'A', 'positionRow': '1', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
     'knight1': {'positionColumn': 'B', 'positionRow': '1', 'slope': {'rise': [2], 'run': [1]}, 'distance': '3', 'direction':['L'], 'inWay': false, 'type': 'knight', 'hinderance': []},   
     'bishop1': {'positionColumn': 'C', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop', 'hinderance': []},
-    'king': {'positionColumn': 'E', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'hinderance': []},
+    'king': {'positionColumn': 'E', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'king','hinderance': []},
     'queen': {'positionColumn': 'D', 'positionRow': '1', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'queen', 'hinderance': []},
     'rook2': {'positionColumn': 'H', 'positionRow': '1', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
     'knight2': {'positionColumn': 'G', 'positionRow': '1', 'slope': {'rise': [2], 'run': [1]}, 'distance': '3', 'direction': ['L'], 'inWay': false, 'type': 'knight', 'hinderance': []},  
@@ -336,7 +338,7 @@ board = {
     'blackrook1': {'positionColumn': 'A', 'positionRow': '8', 'slope': {'rise': [0], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
     'blackknight1': {'positionColumn': 'B', 'positionRow': '8', 'slope': {'rise': [2], 'run': [1]}, 'distance': '4', 'direction': ['L'], 'inWay': false, 'type': 'knight', 'hinderance': []},  
     'blackbishop1': {'positionColumn': 'C', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '8', 'direction': ['diagonal'], 'inWay': false, 'type': 'bishop', 'hinderance': []},
-    'blackking': {'positionColumn': 'E', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'hinderance': []},
+    'blackking': {'positionColumn': 'E', 'positionRow': '8', 'slope': {'rise': [1], 'run': [1]}, 'distance': '1', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'king','hinderance': []},
     'blackqueen': {'positionColumn': 'D', 'positionRow': '8', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward', 'backward', 'left', 'right', 'diagonal'], 'inWay': false, 'type': 'queen', 'hinderance': []},
     'blackrook2': {'positionColumn': 'H', 'positionRow': '8', 'slope': {'rise': [1], 'run': [0]}, 'distance': '8', 'direction': ['forward','backward','left','right'], 'inWay': false, 'type': 'rook', 'hinderance': []},  
     'blackknight2': {'positionColumn': 'G', 'positionRow': '8', 'slope': {'rise': [2], 'run': [1]}, 'distance': '4', 'direction': 'L', 'inWay': false, 'type': 'knight', 'hinderance': []},  
@@ -364,7 +366,7 @@ function piecesRules() {
     for(let i = 0; i<piecesArr.length; i++) {
         let stopColor = false;
 
-        if(kingInCheck) {
+        if(i === 0 && kingInCheck) {
             checkCheckmate()
         }
         document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
@@ -415,19 +417,35 @@ const checkCheckmate = () => {
     // } else {
     //     return false
     // }
+
+    checkIfKingCanMove()
+    checkIfPieceCanGetInWay()
+    //checkIfPieceCanMurder()
+
+    if(piecesThatCanMove.length === 0) {
+        return true
+    } 
+    
+    return false
 }
 
 const checkIfPieceCanGetInWay = () => {
     let start, end
     
-    if(pieceTryingToKillKing == 'knight1' || pieceTryingToKillKing == 'knight2' || pieceTryingToKillKing == 'blackknight1' || pieceTryingToKillKing == 'blackknight2') {
-        return false
+    if(board[pieceTryingToKillKing]['type'] === 'knight' || board[pieceTryingToKillKing]['type'] === 'pawn') {
+        return 
     } 
-
-    const killSquares = []
-
     
+    const directions = board[pieceTryingToKillKing]['direction']
+    let position = board[pieceTryingToKillKing]['positionColumn'] + board[pieceTryingToKillKing]['positionRow'] 
 
+
+    for(let i=0; i<directions.length; i++) {
+        checkMovesCausingKingCheck(directions[i], position, false)
+        if(killSquares.length !== 0) 
+            break
+    }
+    
     if(turn === 'white') {
         start = 0
         end = 17
@@ -436,14 +454,200 @@ const checkIfPieceCanGetInWay = () => {
         end = piecesArr.length
     }
 
-    for(let i=start; i<end; i++) {
-        
-    }
 
+    for(let i=start; i<end; i++) {
+        // call the same 'checkMovesCausingKingCheck()' function and pass in a new para that will, instead of checking for the King, will simply move in all the directions that that piece can move, and if any of the moves is equal to 'killSquares', that would mean that this piece can move into the way of the piece causing check, and therefore we will add this piece to the array of pieces that can move
+
+        const pieceDirection = (board[piecesArr[i].slice(1, piecesArr[i].length)]['direction']);
+        let piecePosition = board[piecesArr[i].slice(1, piecesArr[i].length)]['positionColumn'] + board[piecesArr[i].slice(1, piecesArr[i].length)]['positionRow']
+
+        
+        for(let j=0; j<pieceDirection.length; j++) {
+            if(board[piecesArr[i].slice(1, piecesArr[i].length)]['type'] === 'king')
+                continue
+            if(checkMovesCausingKingCheck(pieceDirection[j], piecePosition, true)) {
+                piecesThatCanMove.push(piecesArr[i])
+            } 
+        }
+    }
 
     pieceTryingToKillKing = ''
 }
 
+const checkMovesCausingKingCheck = (direction, pos, checkEveryPiece) => {
+    let positionRow = pos.charAt(1)
+    let positionColumnIndex = findIndex(pos.charAt(0))
+    let newPosition = ''
+    let counter = 1
+    let second = false
+    do {
+        newPosition = ''
+        if(direction === 'forward') {
+            positionRow++
+        } else if(direction === 'backward') {
+            positionRow--
+        } else if(direction === 'left') {
+            positionColumnIndex--
+        } else if(direction === 'right') {
+            positionColumnIndex++
+        } else if(direction === 'diagonal'){
+            if(counter === 1) 
+                newPosition = checkDiags('upRight', positionRow, positionColumnIndex)
+            else if(counter === 2)
+                newPosition = checkDiags('upLeft', positionRow, positionColumnIndex)
+            else if(counter === 3)
+                newPosition = checkDiags('downLeft', positionRow, positionColumnIndex)
+            else if(counter === 4)
+                newPosition = checkDiags('downRight', positionRow, positionColumnIndex)
+                
+            if(!Number.isNaN(newPosition)) {
+                positionColumnIndex = findIndex(newPosition.charAt(0))
+                positionRow = newPosition.charAt(1)
+            }
+        } else {
+            let rowIncrement = 1
+            let columnIncrement = 2
+            if(second) {
+                rowIncrement = 2
+                columnIncrement = 1
+            }
+
+            if(counter === 1) {
+                positionRow = parseInt(positionRow) + rowIncrement
+                positionColumnIndex += columnIncrement 
+            } else if(counter === 2) {
+                positionRow = parseInt(positionRow) + rowIncrement
+                positionColumnIndex -= columnIncrement
+            } else if(counter === 3) {
+                positionRow = parseInt(positionRow) - rowIncrement
+                positionColumnIndex += columnIncrement
+            } else if(counter === 4) {
+                positionRow = parseInt(positionRow) - rowIncrement
+                positionColumnIndex -= columnIncrement
+            }
+        }
+
+        let piece = findPiece(pos)
+        
+        if(checkEveryPiece) {
+            if(positionRow === '-' || Number.isNaN(newPosition) || checkIfOutOfBounds(positionColumnIndex, positionRow)) {
+                if(direction === 'diagonal' || direction === 'L') {
+                    counter++
+                    if(counter > 4){
+                        break
+                    }
+
+                    newPosition = ''
+                    positionRow = pos.charAt(1)
+                    positionColumnIndex = findIndex(pos.charAt(0))
+
+                    continue
+                } else {
+                    break
+                }
+    
+            }
+        } else {
+            if(checkIfOutOfBounds(positionColumnIndex, positionRow)) {
+                break
+            }
+        }
+
+        if(newPosition === '') {
+            newPosition = letter[positionColumnIndex] + positionRow
+        }
+
+
+        if(!checkEveryPiece) {
+            if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                break;
+            } 
+    
+            if(!checkIfKing(newPosition, false)) {
+                killSquares.push(newPosition)
+            }
+        } else {
+            if(killSquares.includes(newPosition)) {
+                if((document.querySelector('#' + newPosition).hasChildNodes() && board[piece]['type'] === 'pawn')) {
+                    return false
+                }
+                return true
+            } else if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                if(direction === 'diagonal' || direction === 'L') {
+                    counter++
+                    newPosition = ''
+                    positionRow = pos.charAt(1)
+                    positionColumnIndex = findIndex(pos.charAt(0))
+                } else {
+                    break
+                }
+            }
+        }
+        
+        if(direction === 'L') {
+            if(second) {
+                if(counter >= 4)
+                    break
+            } else {
+                if(counter >= 4) {
+                    second = true
+                    counter = 1
+                    newPosition = ''
+                    positionRow = pos.charAt(1)
+                    positionColumnIndex = findIndex(pos.charAt(0))
+                }
+            }
+        }
+
+        if(newPosition !== '' && (direction === 'diagonal' || direction === 'L')) {
+            if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                counter++
+                newPosition = ''
+                positionRow = pos.charAt(1)
+                positionColumnIndex = findIndex(pos.charAt(0))
+            }
+        }
+    
+        if(board[piece]['type'] === 'pawn') {
+            if(!board[piece]['firstMove']) {
+                break
+            }  else {
+                if(counter === 2)
+                    break
+                counter++
+            }
+        }        
+        
+    } while(!checkIfKing(newPosition, false) || counter >= 4)
+
+    if(!checkEveryPiece)
+    {
+        if(!checkIfKing(newPosition, false)) {
+            killSquares.splice(0, killSquares.length)
+        }
+    } else {
+        return false
+    }
+}
+ 
+const checkDiags = (direction, positionRow, positionColumnIndex) => {
+    if(direction === 'upRight') {
+        positionRow++
+        positionColumnIndex++
+    } else if(direction === 'upLeft') {
+        positionRow++
+        positionColumnIndex--
+    } else if(direction === 'downLeft') {
+        positionRow--
+        positionColumnIndex--
+    } else if(direction === 'downRight') {
+        positionRow--
+        positionColumnIndex++
+    }
+
+    return (letter[positionColumnIndex] + parseInt(positionRow))
+
+}
 
 const checkIfKingCanMove = () => {
     let piece 
@@ -456,11 +660,10 @@ const checkIfKingCanMove = () => {
     let position = board[piece]['positionColumn'] + board[piece]['positionRow']
 
     for(let i=1; i<=8; i++) {
-        if(checkTheMoves(i, position))
-            return true
+        if(checkTheMoves(i, position)) {
+            piecesThatCanMove.push(piece)
+        }
     }
-
-    return false
 }
 
 const checkTheMoves = (direction, position) => {
@@ -664,7 +867,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                         break
                     }
                     if(document.querySelector('#' + temp).hasChildNodes()) {
-                        if(checkIfKing(temp)) {
+                        if(checkIfKing(temp, true)) {
                             alert('KING IN CHECK!! DONT THROW')
                             pieceTryingToKillKing = piece
                         }
@@ -686,7 +889,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                         break
                     }
                     if(document.querySelector('#' + temp).hasChildNodes()) {
-                        if(checkIfKing(temp)) {
+                        if(checkIfKing(temp, true)) {
                             alert('KING IN CHECK!! DONT THROW')
                             pieceTryingToKillKing = piece
                         }
@@ -744,7 +947,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             
             if(document.querySelector('#' + newPosition).hasChildNodes()){
                 if(!goingFurther) {
-                    if(checkIfKing(newPosition)) {
+                    if(checkIfKing(newPosition, true)) {
                         alert('KING IN CHECKK!! DONT LOOSE')
                         kingInCheck = true
                         pieceTryingToKillKing = piece
@@ -754,7 +957,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
                     }
                 } else {
                     if(document.querySelector('#' + newPosition).hasChildNodes()) {
-                        if(checkIfKing(newPosition)) {
+                        if(checkIfKing(newPosition, true)) {
                             arrOfPredators.push(pieceThatMightBeInWay)
                             arrOfPredators.push(findPiece(originalPosition))
                         } else {
@@ -776,9 +979,9 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
     goingFurther = false
 }
 
-function checkAllDirections(pos)
+function checkAllDirections(pos, checkMurderer)
 {
-    if(checkForward(pos) || checkBackward(pos) || checkRight(pos) || checkLeft(pos) || checkDiagonal(pos) || checkL(pos))
+    if(checkForward(pos, checkMurderer) || checkBackward(pos, checkMurderer) || checkRight(pos) || checkLeft(pos) || checkDiagonal(pos) || checkL(pos))
         return true
 
     return false;
@@ -903,13 +1106,14 @@ function checkLeft(pos) {
     return false
 }
 
-function checkRight(pos) {
+function checkRight(pos, checkMurderer) {
     let placeNo = parseInt(pos.charAt(1))
     let placeLetter = pos.charAt(0)
     let index = findIndex(placeLetter)
 
     for(let i=index+1; i<letter.length; i++){
         let newPos = letter[i] + placeNo
+        
         if(document.querySelector('#' + newPos).hasChildNodes()){
             if(checkIfQueen(newPos) || checkIfRook(newPos)) {
                 return true;
@@ -921,7 +1125,7 @@ function checkRight(pos) {
     return false
 }
 
-function checkBackward(pos){
+function checkBackward(pos, checkMurderer){
     let placeNo = parseInt(pos.charAt(1))
     let placeLetter = pos.charAt(0)
 
@@ -935,13 +1139,13 @@ function checkBackward(pos){
                 return true;
             }
             break;
+        
         }
     }
-
     return false
 }
 
-function checkForward(pos) {
+function checkForward(pos, checkMurderer) {
     let placeNo = pos.charAt(1)
     let placeLetter = pos.charAt(0)
 
@@ -951,12 +1155,14 @@ function checkForward(pos) {
 
     for(let i=0; i<=(8-placeNo); i++) {
         let newPos = (placeLetter) + (parseInt(placeNo) + i)
+        
         if(document.querySelector('#' + newPos).hasChildNodes()){
             if(checkIfQueen(newPos) || checkIfRook(newPos)) {
                 return true;
             }
             break;
         }
+        
     }
 
     return false;
@@ -1029,9 +1235,20 @@ function checkIfQueen(pos) {
 }
 
 
-function checkIfKing(pos) {
+function checkIfKing(pos, colorCare) {
     let piece = findPiece(pos, false)
-    // alert('piece: ' + piece)
+    if(!colorCare) {
+        if(turn === 'white') {
+            if(piece === 'king')
+                return true
+        } else {
+            if(piece === 'blackking') 
+                return true
+        }
+
+        return false
+    }
+
     if(turn === 'black') {
         if(piece === 'king')
             return true
@@ -1153,8 +1370,9 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             
             if(kingCheck){
                 if(document.querySelector('#' + newPosition).hasChildNodes()){
-                    if(checkIfKing(newPosition)) {
+                    if(checkIfKing(newPosition, true)) {
                         alert('KING IN CHECK!! DONT THROW')
+                        piece = findPiece(originalPosition, false)
                         pieceTryingToKillKing = piece
                     }
                 }
@@ -1192,9 +1410,10 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
             
             if(document.querySelector('#' + newPosition).hasChildNodes()){
                 if(!goingFurther) {
-                    if(checkIfKing(newPosition)) {
+                    if(checkIfKing(newPosition, true)) {
                         alert('KING IN CHECKK!! DONT LOOSE')
                         kingInCheck = true
+                        piece = findPiece(originalPosition, false)
                         pieceTryingToKillKing = piece
                     } else {
                         pieceThatMightBeInWay = findPiece(newPosition);
@@ -1202,7 +1421,7 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                     }
                 } else {
                     if(document.querySelector('#' + newPosition).hasChildNodes()) {
-                        if(checkIfKing(newPosition)) {
+                        if(checkIfKing(newPosition, true)) {
                             arrOfPredators.push(pieceThatMightBeInWay)
                             arrOfPredators.push(findPiece(originalPosition))
                         } else {
