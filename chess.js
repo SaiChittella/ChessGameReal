@@ -773,6 +773,12 @@ const kingDanger = (piece) => {
         document.querySelector(piece).style.width = '70px'; 
 }
 
+
+document.querySelector('#forfietButton').addEventListener('click', () => {
+    alert('YOU LOSER! YOU HAVE CHOSEN THE COWARD APPROACH AND GIVEN UP. TAKE THE L! 🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾')
+    location.reload()
+})
+
 document.querySelector('#statsButton').addEventListener('click', () => {
     document.querySelector('#popup-1').classList.toggle('active');
     document.querySelector('#popup-1').style.color = 'black';
