@@ -225,60 +225,6 @@ function putButtons() {
 }
 putButtons();
 
-const turns = [];
-let whiteGuess = "";
-let coinToss = 10;
-
-function tossCoin() {
-    let correctType = false;
-    while(!correctType) {
-        whiteGuess = prompt('Heads or Tails?(white)');
-        if(whiteGuess.toLowerCase() === 'heads' || whiteGuess.toLowerCase() === 'tails') {
-            correctType = true;
-        }
-    }
-    
-    coinToss = Math.round(Math.random() * 1);
-    
-    if(coinToss === 0) {
-        alert('Heads!');
-    } else {
-        alert('Tails!');
-    }
-    determineWhoGoesFirst(); 
-}
-
-tossCoin();
-
-
-function determineWhoGoesFirst() { 
-    if(whiteGuess.toLowerCase() === 'heads' && coinToss === 0) {
-        // turn = 'white';
-        displayWhoGoesFirst('White');
-        putTurns('White');
-    } else if(whiteGuess.toLowerCase() === 'tails' && coinToss === 1) {
-        // turn = 'white';
-        displayWhoGoesFirst('White');
-        putTurns('White');
-    } else {
-        // turn = 'black';
-        displayWhoGoesFirst('Black');
-        putTurns('Black');
-    }
-}
-
-function putTurns(firstPlayer) {
-    if(firstPlayer == "White"){
-        turns[0] = 'White';
-        turns[1] = 'Black';
-    }
-} 
-
-
-function displayWhoGoesFirst(player) {
-    alert(player + ' Goes First!');
-}
-
 // map of board
 boardPieces = {
     '#rook1': 'rook1',
@@ -367,8 +313,20 @@ function piecesRules() {
         let stopColor = false;
 
         if(i === 0 && kingInCheck) {
-            checkCheckmate()
+            if(checkCheckmate()) {
+                if(turn === 'white')
+                    alert('SKILL ISSUE DETECTED: YOU HAVE BEEN UTTERLY DEMOLISHED BY BLACK 🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾')
+                else 
+                    alert('SKILL ISSUE DETECTED: YOU HAVE BEEN UTTERLY DEMOLISHED BY WHITE 🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾🙅🏾‍♂️👎🏾') 
+                
+                return
+            }
         }
+
+        if(kingInCheck &&  !piecesThatCanMove.includes(piecesArr[i])) {
+            continue
+        }
+
         document.querySelector(piecesArr[i]).addEventListener('mouseover', () => {
             if(!stopColor) {
                 document.querySelector(piecesArr[i]).style.backgroundColor = 'yellow';
@@ -385,6 +343,12 @@ function piecesRules() {
         });
 
         document.querySelector(piecesArr[i]).addEventListener('click', () => {
+            if(kingInCheck) {
+                kingInCheck = false
+                killSquares.slice(0, killSquares.length)
+                piecesThatCanMove.slice(0, piecesThatCanMove.length)
+            }
+            removeClicksFromEmptyPlaces();
             removeHighlights(true); 
             document.querySelector(piecesArr[i]).style.backgroundColor = 'lightGreen'; 
             stopColor = true;  
@@ -393,6 +357,18 @@ function piecesRules() {
          
     } 
 }
+
+const removeClicksFromEmptyPlaces = () => {
+    for(let i=0; i<letters.length; i++) {
+        for(let j=1; j<=8; j++)
+        {
+            if(!document.querySelector('#' + (letters[i] + j)).hasChildNodes()) {
+                removeClicksForPiece(letters[i] + j)
+            }
+        }
+    }
+}
+
 
 const checkCheckmate = () => {
     /*
@@ -412,9 +388,9 @@ const checkCheckmate = () => {
             If any of these are true, do it.
     */
 
-    checkIfKingCanMove()
     checkIfPieceCanGetInWay()
-    //checkIfPieceCanMurder()
+    checkIfKingCanMove()
+
 
     if(piecesThatCanMove.length === 0) {
         return true
@@ -426,6 +402,8 @@ const checkCheckmate = () => {
 const checkIfPieceCanGetInWay = () => {
     let start, end
     
+
+
     if(board[pieceTryingToKillKing]['type'] === 'knight' || board[pieceTryingToKillKing]['type'] === 'pawn') {
         return 
     } 
@@ -437,19 +415,22 @@ const checkIfPieceCanGetInWay = () => {
     for(let i=0; i<directions.length; i++) {
         checkMovesCausingKingCheck(directions[i], position, false)
         if(killSquares.length !== 0) {
-            killSquares.push(position)
             break
         }
     }
+
+    killSquares.push(position)
     
+
+
+
     if(turn === 'white') {
         start = 0
-        end = 17
+        end = 15
     } else {
-        start = 17 
+        start = 15 
         end = piecesArr.length
     }
-
 
     for(let i=start; i<end; i++) {
         // call the same 'checkMovesCausingKingCheck()' function and pass in a new para that will, instead of checking for the King, will simply move in all the directions that that piece can move, and if any of the moves is equal to 'killSquares', that would mean that this piece can move into the way of the piece causing check, and therefore we will add this piece to the array of pieces that can move
@@ -457,7 +438,7 @@ const checkIfPieceCanGetInWay = () => {
         const pieceDirection = (board[piecesArr[i].slice(1, piecesArr[i].length)]['direction']);
         let piecePosition = board[piecesArr[i].slice(1, piecesArr[i].length)]['positionColumn'] + board[piecesArr[i].slice(1, piecesArr[i].length)]['positionRow']
 
-        
+
         for(let j=0; j<pieceDirection.length; j++) {
             if(board[piecesArr[i].slice(1, piecesArr[i].length)]['type'] === 'king')
                 continue
@@ -467,7 +448,6 @@ const checkIfPieceCanGetInWay = () => {
         }
     }
 
-    alert(piecesThatCanMove)
     pieceTryingToKillKing = ''
 }
 
@@ -477,6 +457,9 @@ const checkMovesCausingKingCheck = (direction, pos, checkEveryPiece) => {
     let newPosition = ''
     let counter = 1
     let second = false
+
+    let piece = findPiece(pos)
+    
     do {
         newPosition = ''
         if(direction === 'forward') {
@@ -496,11 +479,28 @@ const checkMovesCausingKingCheck = (direction, pos, checkEveryPiece) => {
                 newPosition = checkDiags('downLeft', positionRow, positionColumnIndex)
             else if(counter === 4)
                 newPosition = checkDiags('downRight', positionRow, positionColumnIndex)
-                
+            
+            
             if(!Number.isNaN(newPosition)) {
                 positionColumnIndex = findIndex(newPosition.charAt(0))
                 positionRow = newPosition.charAt(1)
             }
+
+            if(board[piece]['type'] === 'pawn') {
+                if(counter > 2) break
+
+                if(killSquares.includes(newPosition) && document.querySelector('#' + newPosition).hasChildNodes() && checkIfOppositeColors(newPosition)) {
+                    piecesThatCanMove.push('#' + piece)
+                    break
+                } else {
+                    newPosition = ''
+                    positionRow = pos.charAt(1)
+                    positionColumnIndex = findIndex(pos.charAt(0))
+                    counter++
+                    continue
+                }
+            }
+
         } else {
             let rowIncrement = 1
             let columnIncrement = 2
@@ -524,8 +524,8 @@ const checkMovesCausingKingCheck = (direction, pos, checkEveryPiece) => {
             }
         }
 
-        let piece = findPiece(pos)
         
+
         if(checkEveryPiece) {
             if(positionRow === '-' || Number.isNaN(newPosition) || checkIfOutOfBounds(positionColumnIndex, positionRow)) {
                 if(direction === 'diagonal' || direction === 'L') {
@@ -554,8 +554,23 @@ const checkMovesCausingKingCheck = (direction, pos, checkEveryPiece) => {
     
             }
         } else {
-            if(checkIfOutOfBounds(positionColumnIndex, positionRow)) {
-                break
+            if(positionRow === '-' || Number.isNaN(newPosition) || checkIfOutOfBounds(positionColumnIndex, positionRow)) {
+                if(direction === 'diagonal') {
+                    counter++
+
+                    newPosition = ''
+                    positionRow = pos.charAt(1)
+                    positionColumnIndex = findIndex(pos.charAt(0))
+
+                    if(counter >= 4) {
+                        break
+                    }
+
+                    killSquares.splice(0, killSquares.length)
+                    continue
+                } else {
+                    break
+                }
             }
         }
 
@@ -563,38 +578,59 @@ const checkMovesCausingKingCheck = (direction, pos, checkEveryPiece) => {
             newPosition = letter[positionColumnIndex] + positionRow
         }
 
+        
 
         if(!checkEveryPiece) {
             if(document.querySelector('#' + newPosition).hasChildNodes()) {
-                break;
-            } 
-    
-            if(!checkIfKing(newPosition, false)) {
-                killSquares.push(newPosition)
-            }
+                break
+             }  else {
+                 killSquares.push(newPosition)
+             }
         } else {
             if(killSquares.includes(newPosition)) {
                 if((document.querySelector('#' + newPosition).hasChildNodes() && board[piece]['type'] === 'pawn')) {
-                    if(direction === 'forward')
-                        break
-                }
+                    if(direction === 'forward' || direction === 'backward') {
+                        return false
+                    }
+                } 
                 return true
             } else if(document.querySelector('#' + newPosition).hasChildNodes()) {
                 if(direction === 'diagonal' || direction === 'L') {
                     counter++
+
+                    if(counter >= 4) {
+                        if(direction === 'l') {
+                            if(!second) {
+                                counter = 1;
+                                newPosition = ''
+                                positionRow = pos.charAt(1)
+                                positionColumnIndex = findIndex(pos.charAt(0))
+                                continue
+                            } else {
+                                break
+                            }
+                        }
+                    }
+
                     newPosition = ''
                     positionRow = pos.charAt(1)
                     positionColumnIndex = findIndex(pos.charAt(0))
                 } else {
                     break
                 }
-            }
+            } 
         }
-        
+       
         if(direction === 'L') {
             if(second) {
-                if(counter >= 4)
+                if(counter >= 4) {
                     break
+                }
+                 
+                counter++
+                newPosition = ''
+                positionRow = pos.charAt(1)
+                positionColumnIndex = findIndex(pos.charAt(0))
             } else {
                 if(counter >= 4) {
                     second = true
@@ -609,25 +645,23 @@ const checkMovesCausingKingCheck = (direction, pos, checkEveryPiece) => {
         }
 
         if(newPosition !== '' && (direction === 'diagonal')) {
-            if(document.querySelector('#' + newPosition).hasChildNodes()) {
                 counter++
                 newPosition = ''
                 positionRow = pos.charAt(1)
                 positionColumnIndex = findIndex(pos.charAt(0))
-            }
         }
     
         if(board[piece]['type'] === 'pawn') {
             if(!board[piece]['firstMove']) {
                 break
             }  else {
-                if(counter === 2)
+                if(counter === 2) {
                     break
+                }
                 counter++
             }
         }        
-        
-    } while(!checkIfKing(newPosition, false) || counter >= 4)
+    } while(!checkIfKing(newPosition, false))
 
     if(!checkEveryPiece)
     {
@@ -670,8 +704,7 @@ const checkIfKingCanMove = () => {
 
     for(let i=1; i<=8; i++) {
         if(checkTheMoves(i, position)) {
-            alert('HERE')
-            piecesThatCanMove.push(piece)
+            piecesThatCanMove.push('#' + piece)
             break
         }
     }
@@ -680,7 +713,6 @@ const checkIfKingCanMove = () => {
 const checkTheMoves = (direction, position) => {
     let positionRow = position.charAt(1) 
     let positionColumnIndex = findIndex(position.charAt(0))
-
 
     if(direction === 1) {
         // right
@@ -714,15 +746,24 @@ const checkTheMoves = (direction, position) => {
 
     let newPosition = letter[positionColumnIndex] + positionRow
 
+
     if(checkIfOutOfBounds(positionColumnIndex, positionRow)) {
         return false
+    } 
+    
+    if(document.querySelector('#' + newPosition).hasChildNodes()) {
+        if(checkIfOppositeColors(newPosition)) {
+            return true
+        } else {
+            return false
+        }
     }
 
-    if(!checkIfPieceIsInWay(newPosition, true, true) && checkAllDirections(newPosition)) {
-        return true
-    } 
 
-    return false
+    if(killSquares.includes(newPosition))
+        return false
+
+    return true
  }
 
 const kingDanger = (piece) => {
@@ -939,7 +980,7 @@ function findMovesDirection(direction, positionColumn, positionRow, distance, po
             if(newPosition == originalPosition)
                 continue
 
-            if((!document.querySelector('#' + newPosition).hasChildNodes()) && checkAllDirections(newPosition)){
+            if(checkAllDirections(newPosition)){
                 safe = false;
             }
         }
@@ -1143,7 +1184,7 @@ function checkBackward(pos){
     if(placeNo === 0)
         return false
 
-    for(let i=placeNo; i>= 1; i--){
+    for(let i=placeNo-1; i>= 1; i--){
         let newPos = (placeLetter) + (i)
         if(document.querySelector('#' + newPos).hasChildNodes()){
             if(checkIfQueen(newPos) || checkIfRook(newPos)) {
@@ -1164,10 +1205,10 @@ function checkForward(pos) {
         return false;
     }
 
-    for(let i=0; i<=(8-placeNo); i++) {
+    for(let i=1; i<=(8-placeNo); i++) {
         let newPos = (placeLetter) + (parseInt(placeNo) + i)
         
-        if(document.querySelector('#' + newPos).hasChildNodes()){
+        if((findPiece(newPos) !== 'king' && findPiece(newPos) !== 'blackking') && document.querySelector('#' + newPos).hasChildNodes()){
             if(checkIfQueen(newPos) || checkIfRook(newPos)) {
                 return true;
             }
@@ -1421,27 +1462,15 @@ function diagonalHighlight(index, positionRow, positionColumn, originalPosition,
                 continue;
             }          
             
-            if(document.querySelector('#' + newPosition).hasChildNodes()){
-                if(!goingFurther) {
-                    if(checkIfKing(newPosition, true)) {
-                        alert('KING IN CHECKK!! DONT LOOSE')
-                        kingInCheck = true
-                        piece = findPiece(originalPosition, false)
-                        pieceTryingToKillKing = piece
-                    } else {
-                        pieceThatMightBeInWay = findPiece(newPosition);
-                        goingFurther = true
-                    }
-                } else {
-                    if(document.querySelector('#' + newPosition).hasChildNodes()) {
-                        if(checkIfKing(newPosition, true)) {
-                            arrOfPredators.push(pieceThatMightBeInWay)
-                            arrOfPredators.push(findPiece(originalPosition))
-                        } else {
-                            break
-                        }
-                    }
+            if(document.querySelector('#' + newPosition).hasChildNodes()) {
+                if(checkIfKing(newPosition, true)) {
+                    alert('KING IN CHECK!! DONT THROW')
+                    kingInCheck = true
+                    piece = findPiece(originalPosition, false)
+                    pieceTryingToKillKing = piece
                 }
+
+                break
             }
         }
 
@@ -1549,13 +1578,14 @@ function movePiece(newPosition, originalPosition, piece) {
 
 
             if((piece.charAt(0) === 'p' || (piece.charAt(0) === 'b' && piece.charAt(5) === 'p')) && piece != 'bishop'){
+                // alert('PIECE IS : ' + piece)
                 if(board[piece]['firstMove']) {
                     board[piece]['distance'] = 1;
                     board[piece]['firstMove'] = false;      
-                }
-            }
+                } 
+            } 
+            
             let colors = Object.keys(pieces);
-            let piecesToCheck = Object.keys(board);
             
             let daPiece = "";
             let black = false;
@@ -1627,10 +1657,7 @@ function movePiece(newPosition, originalPosition, piece) {
 
             if(daPiece !== 'blackking' && daPiece !== 'king') {
                 highlightMoves(2, 1, daPiece, true, false)            
-            }  
-
-
-                    
+            } 
             
 
             if(turn === 'white') {
@@ -1639,6 +1666,8 @@ function movePiece(newPosition, originalPosition, piece) {
                 turn = 'white';
                 document.querySelector('#' + daPiece).style.transform = 'rotate(180deg)'
             }
+
+
             piecesRules();
 
             flipBoard();
@@ -1687,12 +1716,8 @@ function removePiece(pos) {
 }
 
 
-//splice(start)
 // NEW STUFF
 function removeHighlights(second) {
-    // let left1 = 32.2;
-    // let top1 = 89.5;
-
     let left1 = 30
     let top1 = 75
 
@@ -1823,24 +1848,19 @@ function rotateNumbers(){
 }
 
 function rotateBoard() {
-    // document.querySelector('.board').style.transformOrigin = 'center';
     document.querySelector('.board').style.transform += 'rotate(180deg)';
 
     document.querySelector('.board').style.width = '100%';
     document.querySelector('.board').style.height = '100%';
     document.querySelector('.board').style.position = 'absolute';
-    // document.querySelector('.board').style.left = '-5%';
-    // document.querySelector('.board').style.top= '-10%';
 }
 
 /*
     Tings Remaining:
         (1) When King is placed in check, for the next turn, only the King should be the only one able to move (DONE)
             To achieve this we can create a global variable called King in Check. When the King is in check we will make this var be true. Every turn, we will check for this variable. If this var is true, then we will disable all other pieces from being able to move. Can do this by 'undoing' the highlight thingy and leave just the King able to move with a danger eye appealing thing around it to show that this needs to be moved. 
-            When this happens, and we highlight the possible moves for the King, if there isn't anything that the King can move to without placing it in check, we will declare Checkmate and the opposite color as the winner. 
-        (2) A piece should not be allowed to move if moving it places the King in check
+            When this happens, and we highlight the possible moves for the King, if there isn't anything that the King can move to without placing it in check, we will declare Checkmate and the opposite color as the winner.  (DONEEEEEEEE)
         (3) Checkmates (DONE)
-        (4) Stalemates 
 */
 
 // window.onbeforeunload = function() {
